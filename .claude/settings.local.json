@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(git checkout:*)",
+      "Bash(node -e \"const p=require\\(''./node_modules/vite/package.json''\\); console.log\\(''vite:'', p.version\\)\")",
+      "Bash(node -e \"const p=require\\(''./node_modules/react/package.json''\\); console.log\\(''react:'', p.version\\)\")"
+    ]
+  }
+}

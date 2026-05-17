@@ -93,10 +93,10 @@ export const translations = {
         full: "Every Tuesday and Saturday, Santiago arrives at The Columbus School to be part of the TCS robotics team. He is one of the Foundation's scholarship students and studies at I.E. Martín Eduardo Ríos Llanos. Within the team, he is part of the mechanical design group, a space that connects with something he has always loved: taking things apart, putting them back together, and understanding how they work. Over this process, he has learned to use tools such as drills and laser cutters, as well as design software that has allowed him to materialize his ideas and turn them into real projects. This experience has also given him the opportunity to meet new people, build friendships, and share with classmates he never imagined he would meet. Today, Santiago dreams of studying programming and sees this team as an opportunity to continue learning and move, step by step, toward the future he wants to build."
       },
       cristobal: {
-        name: "Cristóbal",
-        role: "Technological Solidarity - TCS Student",
-        excerpt: "One morning in May 2023, Cristóbal, a TCS student, met Janelly, Steven, and Maicol, 3 children from I.E. Martín Eduardo Ríos Llanos.",
-        full: "One morning in May 2023, Cristóbal, a TCS student, met Janelly, Steven, and Maicol, 3 children from I.E. Martín Eduardo Ríos Llanos. Throughout the school year, Cristóbal with two other TCS classmates led the 'Technological Solidarity' campaign with Professor David Murphy and joined the Foundation to donate 24 computers in excellent condition to I.E. Martín Eduardo students. Cristóbal smiles during the activity because he knows he is not just delivering computers, but supporting the educational process of children who do not have the same opportunities."
+        name: "Camila and María Luisa",
+        role: "English in Action - TCS Volunteers",
+        excerpt: "Camila and María Luisa are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.",
+        full: "Camila and María Luisa are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.\nEvery Wednesday, after school, they dedicate their time to teaching classes and creating spaces where English is experienced in a closer, more fun and dynamic way. Beyond teaching vocabulary or practicing conversations, they aim for students to gain confidence, get excited about learning, and discover new opportunities through the language.\nFor Camila, one of her biggest motivations is seeing the change that happens little by little in the students: how they begin to get more excited about learning, how they participate with more confidence, and how English stops feeling distant and becomes a real possibility.\nFor María Luisa, volunteering has been an opportunity to understand other realities, grow in empathy, and discover that even small actions and a few hours of time can generate a significant impact on the lives of others.\nTogether, they have turned their motivations into real actions that today generate learning and new opportunities for other young people."
       },
       nicolas: {
         name: "Nicolás Zuleta",
@@ -128,6 +128,8 @@ export const translations = {
       suggestedAmounts: "Suggested Amounts",
       otherAmount: "Or enter another amount (minimum $10,000):",
       customAmount: "Custom Amount",
+      fullScholarship: "Full scholarship",
+      halfScholarship: "Half scholarship",
 
       certificate: "Donation Certificate",
       certificateText: "If you wish to receive a donation certificate, send an email to {email} attaching your RUT and proof of donation. This certificate will be issued in the name of the person making the donation and cannot be modified once the donation is made.",
@@ -135,6 +137,8 @@ export const translations = {
       button: "Continue to Payment",
       processing: "Processing donation...",
       securePayment: "100% secure payment with Wompi",
+      or: "or",
+      recurringButton: "Set up recurring donation",
 
       // Mensajes
       errors: {
@@ -145,6 +149,60 @@ export const translations = {
       success: {
         title: "Donation processed successfully!",
         message: "Thank you for your support. You will receive a confirmation email."
+      }
+    },
+
+    // === RECURRING PAYMENT MODAL ===
+    recurring: {
+      title: "Recurring Donation",
+      subtitle: "Register your payment source to donate monthly",
+      back: "Back",
+      retry: "Try again",
+      close: "Done",
+      step1: {
+        title: "Accept terms",
+        subtitle: "We need your authorization to register your payment source with Wompi.",
+        emailLabel: "Email *",
+        loadingTerms: "Loading terms...",
+        acceptText: "I have read and accept the",
+        endUserPolicy: "End User Policy",
+        andThe: "and the",
+        personalDataAuth: "Personal Data Authorization",
+        continue: "Continue"
+      },
+      step2: {
+        title: "Choose payment method",
+        subtitle: "Select a method and enter your data.",
+        card: "Card",
+        cardSoon: "Card payment will be enabled soon",
+        soon: "soon",
+        phoneLabel: "Nequi phone number *",
+        phoneHelp: "10 digits, must start with 3",
+        sending: "Sending...",
+        continue: "Continue"
+      },
+      step3: {
+        title: "Approve in the Nequi app",
+        instruction: "Open your Nequi app and accept the registration request.",
+        phone: "Phone",
+        timeout: "We will wait up to 2 minutes."
+      },
+      step4: {
+        title: "Payment source registered!",
+        message: "From now on you can make recurring donations with this source.",
+        type: "Type",
+        phone: "Phone",
+        status: "Status"
+      },
+      errors: {
+        acceptance: "Could not load the terms. Please try again.",
+        acceptTerms: "You must accept the terms to continue.",
+        invalidEmail: "Please enter a valid email.",
+        invalidPhone: "Phone must be 10 digits starting with 3.",
+        tokenize: "Could not register the phone number with Nequi.",
+        timeout: "Time expired without approval. Please try again.",
+        declined: "The request was declined in Nequi. Please try again.",
+        backend: "Could not register the payment source on the server."
       }
     },
 
@@ -352,15 +410,15 @@ export const translations = {
       readLess: "Leer menos",
       brayan: {
         name: "Santiago Ramírez",
-        role: "Programa ConnecTI - Diseño mecánico",
+        role: "Programa de becas robótica - ConnecTI",
         excerpt: "Todos los martes y sábados, Santiago llega a The Columbus School para hacer parte del equipo de robótica TCS. Es uno de los estudiantes becados de la Fundación y estudia en la Institución Educativa Martín Eduardo Ríos Llanos.",
         full: "Todos los martes y sábados, Santiago llega a The Columbus School para hacer parte del equipo de robótica TCS. Es uno de los estudiantes becados de la Fundación y estudia en la Institución Educativa Martín Eduardo Ríos Llanos. Dentro del equipo, hace parte del grupo de diseño mecánico, un espacio que conecta con algo que siempre le ha gustado: armar, desarmar y entender cómo funcionan las cosas. A lo largo de este proceso, ha aprendido a usar herramientas como taladros y cortadoras láser, además de programas de diseño que le han permitido materializar sus ideas y convertirlas en proyectos reales. Esta experiencia también le ha dado la oportunidad de conocer nuevas personas, construir amistades y compartir con compañeros con quienes antes no imaginaba coincidir. Hoy, Santiago sueña con estudiar programación y ve en este equipo una oportunidad para seguir aprendiendo y acercarse, paso a paso, al futuro que quiere construir."
       },
       cristobal: {
-        name: "Cristóbal",
-        role: "Solidaridad Tecnológica - Estudiante TCS",
-        excerpt: "Una mañana del mes de mayo de 2023, Cristóbal, un estudiante TCS conoció a Janelly, Steven y Maicol, 3 niños pertenecientes a la I.E. Martín Eduardo Ríos Llanos.",
-        full: "Una mañana del mes de mayo de 2023, Cristóbal, un estudiante TCS conoció a Janelly, Steven y Maicol, 3 niños pertenecientes a la I.E. Martín Eduardo Ríos Llanos. A lo largo del año escolar, Cristóbal con otros dos compañeros TCS lideraron la campaña \"Solidaridad Tecnológica\" junto al profesor David Murphy y se unieron a la Fundación para donar 24 computadores en excelente estado a los estudiantes de la I.E. Martín Eduardo. Cristóbal sonríe mientras se desarrolla la actividad pues sabe que no solo entrega computadores, sino que está apoyando el proceso educativo de niños que no tienen sus mismas oportunidades."
+        name: "Camila y María Luisa",
+        role: "English in Action - Voluntarias TCS",
+        excerpt: "Camila y María Luisa son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.",
+        full: "Camila y María Luisa son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.\nCada miércoles, después del colegio, dedican su tiempo a dar las clases y crear espacios donde el inglés se vive de una manera más cercana, divertida y dinámica. Más allá de enseñar vocabulario o practicar conversaciones, buscan que los estudiantes ganen confianza, se emocionen por aprender y descubran nuevas oportunidades a través del idioma.\nPara Camila, una de las mayores motivaciones es ver el cambio que ocurre poco a poco en los estudiantes: cómo empiezan a emocionarse más por aprender, cómo participan con más seguridad y cómo el inglés deja de sentirse lejano para convertirse en una posibilidad real.\nPara María Luisa, el voluntariado ha sido una oportunidad para entender otras realidades, crecer en empatía y descubrir que incluso pequeñas acciones y unas horas de tiempo pueden generar un impacto significativo en la vida de otras personas.\nJuntas, han convertido sus motivaciones en acciones reales que hoy generan aprendizaje y nuevas oportunidades para otros jóvenes."
       },
       nicolas: {
         name: "Nicolás Zuleta",
@@ -392,6 +450,8 @@ export const translations = {
       suggestedAmounts: "Montos sugeridos",
       otherAmount: "O ingresa otro valor (mínimo $10.000):",
       customAmount: "Monto personalizado",
+      fullScholarship: "Beca completa",
+      halfScholarship: "Media beca",
 
       certificate: "Certificado de donación",
       certificateText: "Si deseas recibir un certificado de donación, envía un correo a {email} en el cual adjuntes tu RUT y el comprobante de tu donación. Este certificado saldrá a nombre de quien realice la donación y no podrá ser modificado una vez se haga la donación.",
@@ -399,6 +459,8 @@ export const translations = {
       button: "Continuar al pago",
       processing: "Procesando donación...",
       securePayment: "Pago 100% seguro con Wompi",
+      or: "o",
+      recurringButton: "Configurar donación recurrente",
 
       // Mensajes
       errors: {
@@ -409,6 +471,60 @@ export const translations = {
       success: {
         title: "¡Donación procesada con éxito!",
         message: "Gracias por tu apoyo. Recibirás un correo de confirmación."
+      }
+    },
+
+    // === RECURRING PAYMENT MODAL ===
+    recurring: {
+      title: "Donación recurrente",
+      subtitle: "Registra tu fuente de pago para donar cada mes",
+      back: "Atrás",
+      retry: "Reintentar",
+      close: "Listo",
+      step1: {
+        title: "Acepta los términos",
+        subtitle: "Necesitamos tu autorización para registrar la fuente de pago con Wompi.",
+        emailLabel: "Correo electrónico *",
+        loadingTerms: "Cargando términos...",
+        acceptText: "He leído y acepto la",
+        endUserPolicy: "Política de Usuario Final",
+        andThe: "y la",
+        personalDataAuth: "Autorización para el Tratamiento de Datos Personales",
+        continue: "Continuar"
+      },
+      step2: {
+        title: "Elige el método de pago",
+        subtitle: "Selecciona un método e ingresa los datos.",
+        card: "Tarjeta",
+        cardSoon: "El pago con tarjeta estará disponible pronto",
+        soon: "próximamente",
+        phoneLabel: "Número Nequi *",
+        phoneHelp: "10 dígitos, debe comenzar con 3",
+        sending: "Enviando...",
+        continue: "Continuar"
+      },
+      step3: {
+        title: "Aprueba en tu app Nequi",
+        instruction: "Abre tu app Nequi y acepta la solicitud de registro.",
+        phone: "Teléfono",
+        timeout: "Esperaremos hasta 2 minutos."
+      },
+      step4: {
+        title: "¡Fuente de pago registrada!",
+        message: "A partir de ahora podrás hacer donaciones recurrentes con esta fuente.",
+        type: "Tipo",
+        phone: "Teléfono",
+        status: "Estado"
+      },
+      errors: {
+        acceptance: "No se pudieron cargar los términos. Intenta de nuevo.",
+        acceptTerms: "Debes aceptar los términos para continuar.",
+        invalidEmail: "Ingresa un correo válido.",
+        invalidPhone: "El número debe tener 10 dígitos y comenzar con 3.",
+        tokenize: "No se pudo registrar el número en Nequi.",
+        timeout: "Pasó el tiempo sin aprobación. Intenta nuevamente.",
+        declined: "La solicitud fue rechazada en Nequi. Intenta de nuevo.",
+        backend: "No se pudo registrar la fuente de pago en el servidor."
       }
     },
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createDonation } from '../../services/donationService'
 import { useLanguage } from '../../translations/LanguageContext'
+import RecurringPaymentModal from './RecurringPaymentModal'
 
 function DonationForm() {
   const { t } = useLanguage()
@@ -23,6 +24,7 @@ function DonationForm() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
+  const [recurringOpen, setRecurringOpen] = useState(false)
 
   // Configuración desde .env
   const WOMPI_PUBLIC_KEY = import.meta.env.VITE_PUBLISHABLE_KEY
@@ -42,7 +44,6 @@ function DonationForm() {
   const defaultSuggestedAmounts = [50000, 100000, 200000]
   const roboticsSuggestedAmounts = [4300000, 2150000]
   const [suggestedAmounts, setSuggestedAmounts] = useState(defaultSuggestedAmounts)
-  const isRoboticsSelected = formData.donation_destination.includes(t('programs.robotics'))
 
   // ===============================
   // CARGAR SCRIPT DE WOMPI
@@ -156,12 +157,9 @@ function DonationForm() {
     }
 
     try {
-      // Generar referencia única
-      const reference = `FTCS-${Date.now()}`
-
       // ===== PREPARAR DATOS PARA EL BACKEND =====
+      // La referencia la genera el backend (formato DON-{UUID}), no el frontend
       const dataToSend = {
-        reference,
         name: formData.name,
         last_name: formData.last_name,
         phone: formData.phone,
@@ -169,8 +167,7 @@ function DonationForm() {
         identity_document: formData.identity_document,
         address: formData.address,
         donation_value: donationAmount,
-        donation_destination: formData.donation_destination,
-        payment_status: 'pending'
+        donation_destination: formData.donation_destination
       }
 
       console.log('📤 Enviando datos al backend:', dataToSend)
@@ -178,6 +175,12 @@ function DonationForm() {
       // ===== GUARDAR EN BACKEND =====
       const result = await createDonation(dataToSend)
       console.log('✅ Respuesta del backend:', result)
+
+      // El backend devuelve { success, data: { reference, name } }
+      const reference = result?.data?.reference
+      if (!reference) {
+        throw new Error('El servidor no devolvió una referencia válida')
+      }
 
       // ===== ABRIR PASARELA DE WOMPI =====
       openWompiCheckout(reference, donationAmount)
@@ -424,64 +427,76 @@ function DonationForm() {
               </div>
               
               {/* Botones de montos sugeridos - MÁS GRANDES */}
-              <div className="grid grid-cols-3 gap-1.5 md:gap-4 mb-5">
-                {suggestedAmounts.map((amount) => (
-                  <button
-                    key={amount}
-                    type="button"
-                    onClick={() => handleSuggestedAmount(amount)}
-                    disabled={loading}
-                    className={`py-3 px-1 md:py-5 md:px-4 rounded-xl font-bold text-xs md:text-lg transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed ${
-                      formData.donation_value === amount.toString()
-                        ? 'text-white scale-105 shadow-2xl'
-                        : 'bg-white hover:scale-105 hover:shadow-lg'
-                    }`}
-                    style={formData.donation_value === amount.toString() 
-                      ? { 
-                          backgroundColor: '#004990',
-                          boxShadow: '0 8px 25px rgba(0, 73, 144, 0.4)'
-                        } 
-                      : { 
-                          color: '#004990',
-                          border: '2px solid #004990'
+              <div className={`grid gap-1.5 md:gap-4 mb-5 ${suggestedAmounts.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                {suggestedAmounts.map((amount) => {
+                  const roboticsLabel =
+                    amount === 4300000 ? t('donation.fullScholarship') :
+                    amount === 2150000 ? t('donation.halfScholarship') : null
+                  return (
+                    <div key={amount} className="flex flex-col items-center">
+                      <button
+                        type="button"
+                        onClick={() => handleSuggestedAmount(amount)}
+                        disabled={loading}
+                        className={`w-full py-3 px-1 md:py-5 md:px-4 rounded-xl font-bold text-xs md:text-lg transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed ${
+                          formData.donation_value === amount.toString()
+                            ? 'text-white scale-105 shadow-2xl'
+                            : 'bg-white hover:scale-105 hover:shadow-lg'
+                        }`}
+                        style={formData.donation_value === amount.toString()
+                          ? {
+                              backgroundColor: '#004990',
+                              boxShadow: '0 8px 25px rgba(0, 73, 144, 0.4)'
+                            }
+                          : {
+                              color: '#004990',
+                              border: '2px solid #004990'
+                            }
                         }
-                    }
-                  >
-                    {formatCurrency(amount)}
-                  </button>
-                ))}
+                      >
+                        {formatCurrency(amount)}
+                      </button>
+                      {roboticsLabel && (
+                        <span
+                          className="mt-2 text-xs md:text-sm font-semibold"
+                          style={{ color: '#004990' }}
+                        >
+                          {roboticsLabel}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
 
-              {!isRoboticsSelected && (
-                <div>
-                  <label className="block text-base font-semibold mb-3 text-center" style={{ color: '#004990' }}>
-                    {t('donation.otherAmount')}
-                  </label>
-                  <input
-                    name="donation_value"
-                    type="number"
-                    min="10000"
-                    placeholder={t('donation.customAmount')}
-                    value={formData.donation_value}
-                    onChange={handleInputChange}
-                    disabled={loading}
-                    className="w-full px-5 py-4 text-lg font-semibold text-center rounded-xl focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed bg-white"
-                    style={{ 
-                      border: '3px solid #004990',
-                      boxShadow: 'none',
-                      color: '#004990'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.boxShadow = '0 0 0 4px rgba(0, 73, 144, 0.2), 0 0 20px rgba(146, 200, 62, 0.3)'
-                      e.target.style.borderColor = '#92c83e'
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.boxShadow = 'none'
-                      e.target.style.borderColor = '#004990'
-                    }}
-                  />
-                </div>
-              )}
+              <div>
+                <label className="block text-base font-semibold mb-3 text-center" style={{ color: '#004990' }}>
+                  {t('donation.otherAmount')}
+                </label>
+                <input
+                  name="donation_value"
+                  type="number"
+                  min="10000"
+                  placeholder={t('donation.customAmount')}
+                  value={formData.donation_value}
+                  onChange={handleInputChange}
+                  disabled={loading}
+                  className="w-full px-5 py-4 text-lg font-semibold text-center rounded-xl focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed bg-white"
+                  style={{
+                    border: '3px solid #004990',
+                    boxShadow: 'none',
+                    color: '#004990'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.boxShadow = '0 0 0 4px rgba(0, 73, 144, 0.2), 0 0 20px rgba(146, 200, 62, 0.3)'
+                    e.target.style.borderColor = '#92c83e'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.boxShadow = 'none'
+                    e.target.style.borderColor = '#004990'
+                  }}
+                />
+              </div>
             </div>
           </div>
 
@@ -550,11 +565,40 @@ function DonationForm() {
             )}
           </button>
 
+          {/* ===== SEPARADOR ===== */}
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 uppercase tracking-wide">
+              {t('donation.or')}
+            </span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* ===== BOTÓN PAGO RECURRENTE ===== */}
+          <button
+            type="button"
+            onClick={() => setRecurringOpen(true)}
+            disabled={loading}
+            className="w-full font-bold py-4 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border-2"
+            style={{ borderColor: '#92c83e', color: '#004990', backgroundColor: '#92c83e1a' }}
+          >
+            <span className="flex items-center justify-center gap-2">
+              <span>🔁</span>
+              {t('donation.recurringButton')}
+            </span>
+          </button>
+
           <p className="text-xs text-gray-500 text-center mt-4">
             🔒 {t('donation.securePayment')}
           </p>
         </div>
       </div>
+
+      <RecurringPaymentModal
+        open={recurringOpen}
+        onClose={() => setRecurringOpen(false)}
+        initialEmail={formData.email}
+      />
     </section>
   )
 }

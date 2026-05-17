@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, FileText, ExternalLink, Clock } from 'lucide
 const alianzasLogos = [
   '/images/Testimonios/60.png',
   '/images/Testimonios/61.png',
+  '/images/Ingles/aliadoss.jpeg',
   '/images/Testimonios/62.png',
   '/images/Testimonios/63.png',
   '/images/Testimonios/64.png',

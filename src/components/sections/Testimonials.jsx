@@ -23,9 +23,9 @@ function Testimonials() {
       role: t('testimonials.cristobal.role'),
       text: t('testimonials.cristobal.full'),
       excerpt: t('testimonials.cristobal.excerpt'),
-      image: "/images/Testimonios/Cristobal.webp",
+      image: "/images/Testimonios/Camila.PNG",
       color: "#92c83e",
-      imagePosition: "center 25%"
+      imagePosition: "center 30%"
     },
     {
       name: t('testimonials.nicolas.name'),
@@ -34,7 +34,7 @@ function Testimonials() {
       excerpt: t('testimonials.nicolas.excerpt'),
       image: "/images/Testimonios/Valentina.webp",
       color: "#004990",
-      imagePosition: "center 25%"
+      imagePosition: "center 40%"
     }
   ]
 

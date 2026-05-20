@@ -40,6 +40,20 @@ export const tokenizeNequi = async (phoneNumber) => {
 }
 
 // ===============================
+// Tokenizar tarjeta (crédito/débito)
+// ===============================
+export const tokenizeCard = async ({ number, cvc, exp_month, exp_year, card_holder }) => {
+  const { data } = await wompi.post('/tokens/cards', {
+    number,
+    cvc,
+    exp_month,
+    exp_year,
+    card_holder
+  })
+  return data?.data
+}
+
+// ===============================
 // PASO 3 — Verificar token Nequi (polling)
 // ===============================
 export const checkNequiToken = async (tokenId) => {
@@ -57,5 +71,35 @@ export const registerNequiSource = async (payload) => {
 
 export const registerCardSource = async (payload) => {
   const response = await api.post('/payment-sources/card/register', payload)
+  return response.data
+}
+
+// ===============================
+// Verificar credenciales para cancelar
+// ===============================
+export const verifyPaymentSource = async ({ customer_email, password }) => {
+  const response = await api.post('/payment-sources/verify', {
+    customer_email,
+    password
+  })
+  return response.data
+}
+
+// ===============================
+// Cancelar fuente de pago recurrente
+// ===============================
+export const cancelPaymentSource = async (id) => {
+  const response = await api.delete(`/payment-sources/${id}`)
+  return response.data
+}
+
+// ===============================
+// Listar cobros recurrentes (admin)
+// ===============================
+export const getRecurringCharges = async ({ status, customer_email } = {}) => {
+  const params = {}
+  if (status) params.status = status
+  if (customer_email) params.customer_email = customer_email
+  const response = await api.get('/payment-sources/charges', { params })
   return response.data
 }

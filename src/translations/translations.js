@@ -139,6 +139,7 @@ export const translations = {
       securePayment: "100% secure payment with Wompi",
       or: "or",
       recurringButton: "Set up recurring donation",
+      cancelRecurringLink: "Have a recurring donation? Cancel here",
 
       // Mensajes
       errors: {
@@ -155,14 +156,32 @@ export const translations = {
     // === RECURRING PAYMENT MODAL ===
     recurring: {
       title: "Recurring Donation",
-      subtitle: "Register your payment source to donate monthly",
+      subtitle: "Set up automatic donations",
       back: "Back",
       retry: "Try again",
       close: "Done",
+      frequencies: {
+        weekly: "Weekly",
+        biweekly: "Biweekly",
+        monthly: "Monthly"
+      },
+      summary: {
+        amount: "Amount",
+        destination: "Destination"
+      },
       step1: {
+        title: "Recurring settings",
+        subtitle: "Choose how often we should charge you and set a password to manage your donation.",
+        frequency: "Billing frequency",
+        password: "Password *",
+        passwordHelp: "Minimum 6 characters. You will use it to cancel later.",
+        confirmPassword: "Confirm password *",
+        understandPassword: "I understand this password will allow me to cancel my donation in the future.",
+        continue: "Continue"
+      },
+      step2: {
         title: "Accept terms",
-        subtitle: "We need your authorization to register your payment source with Wompi.",
-        emailLabel: "Email *",
+        subtitle: "We need your authorization to register the payment source with Wompi.",
         loadingTerms: "Loading terms...",
         acceptText: "I have read and accept the",
         endUserPolicy: "End User Policy",
@@ -170,39 +189,97 @@ export const translations = {
         personalDataAuth: "Personal Data Authorization",
         continue: "Continue"
       },
-      step2: {
+      step3: {
         title: "Choose payment method",
         subtitle: "Select a method and enter your data.",
-        card: "Card",
+        card: "Credit/Debit Card",
         cardSoon: "Card payment will be enabled soon",
         soon: "soon",
         phoneLabel: "Nequi phone number *",
         phoneHelp: "10 digits, must start with 3",
+        cardNumber: "Card number *",
+        cardHolder: "Card holder name *",
+        expMonth: "Month *",
+        expYear: "Year *",
+        cvc: "CVC *",
+        cardSecurity: "Your card data is sent directly to Wompi and never stored on our servers.",
         sending: "Sending...",
         continue: "Continue"
       },
-      step3: {
+      step4: {
         title: "Approve in the Nequi app",
-        instruction: "Open your Nequi app and accept the registration request.",
+        instruction: "Open your Nequi app and accept the subscription request.",
         phone: "Phone",
         timeout: "We will wait up to 2 minutes."
       },
-      step4: {
-        title: "Payment source registered!",
-        message: "From now on you can make recurring donations with this source.",
+      step5: {
+        title: "Recurring donation set up!",
+        message: "From now on we will charge you automatically.",
+        nextBilling: "Next charge",
+        frequency: "Frequency",
         type: "Type",
         phone: "Phone",
-        status: "Status"
+        card: "Card",
+        expires: "Expires"
       },
       errors: {
         acceptance: "Could not load the terms. Please try again.",
         acceptTerms: "You must accept the terms to continue.",
         invalidEmail: "Please enter a valid email.",
         invalidPhone: "Phone must be 10 digits starting with 3.",
+        shortPassword: "Password must be at least 6 characters.",
+        passwordMismatch: "Passwords do not match.",
+        passwordAck: "You must confirm you understand the use of the password.",
         tokenize: "Could not register the phone number with Nequi.",
+        tokenizeCard: "Could not tokenize the card. Check the data.",
+        invalidCardNumber: "Invalid card number.",
+        invalidCvc: "Invalid CVC.",
+        invalidExpMonth: "Expiration month is invalid.",
+        invalidExpYear: "Expiration year is invalid.",
+        invalidHolder: "Enter the card holder name.",
         timeout: "Time expired without approval. Please try again.",
         declined: "The request was declined in Nequi. Please try again.",
         backend: "Could not register the payment source on the server."
+      }
+    },
+
+    // === CANCEL RECURRING DONATION ===
+    cancelRecurring: {
+      title: "Cancel Recurring Donation",
+      subtitle: "Verify your identity to cancel",
+      close: "Done",
+      step1: {
+        title: "Sign in",
+        subtitle: "Enter the email and password you used when setting up the donation.",
+        email: "Email *",
+        password: "Password *",
+        passwordHelp: "The one you created when registering the recurring donation.",
+        verifying: "Verifying...",
+        continue: "Continue"
+      },
+      step2: {
+        title: "Confirm cancellation",
+        warning: "You are about to cancel your recurring donation. This action cannot be undone.",
+        amount: "Amount",
+        frequency: "Frequency",
+        destination: "Destination",
+        nextBilling: "Next charge",
+        phone: "Phone",
+        back: "Go back",
+        confirm: "Cancel donation",
+        canceling: "Canceling..."
+      },
+      step3: {
+        title: "Recurring donation canceled",
+        message: "Your recurring donation has been canceled. We won't charge you again."
+      },
+      errors: {
+        invalidEmail: "Please enter a valid email.",
+        missingPassword: "Please enter your password.",
+        invalidCredentials: "Email or password is incorrect.",
+        notFound: "No active payment source was found for this email.",
+        generic: "Could not verify your identity. Please try again.",
+        cancel: "Could not cancel the donation. Please try again."
       }
     },
 
@@ -461,6 +538,7 @@ export const translations = {
       securePayment: "Pago 100% seguro con Wompi",
       or: "o",
       recurringButton: "Configurar donación recurrente",
+      cancelRecurringLink: "¿Tienes una donación recurrente? Cancélala aquí",
 
       // Mensajes
       errors: {
@@ -477,14 +555,32 @@ export const translations = {
     // === RECURRING PAYMENT MODAL ===
     recurring: {
       title: "Donación recurrente",
-      subtitle: "Registra tu fuente de pago para donar cada mes",
+      subtitle: "Configura tu donación automática",
       back: "Atrás",
       retry: "Reintentar",
       close: "Listo",
+      frequencies: {
+        weekly: "Semanal",
+        biweekly: "Quincenal",
+        monthly: "Mensual"
+      },
+      summary: {
+        amount: "Monto",
+        destination: "Destino"
+      },
       step1: {
+        title: "Configura tu recurrencia",
+        subtitle: "Elige cada cuánto quieres donar y define una contraseña para gestionar tu donación.",
+        frequency: "Frecuencia de cobro",
+        password: "Contraseña *",
+        passwordHelp: "Mínimo 6 caracteres. La usarás para cancelar más adelante.",
+        confirmPassword: "Confirma la contraseña *",
+        understandPassword: "Entiendo que esta contraseña me permitirá cancelar mi donación en el futuro.",
+        continue: "Continuar"
+      },
+      step2: {
         title: "Acepta los términos",
         subtitle: "Necesitamos tu autorización para registrar la fuente de pago con Wompi.",
-        emailLabel: "Correo electrónico *",
         loadingTerms: "Cargando términos...",
         acceptText: "He leído y acepto la",
         endUserPolicy: "Política de Usuario Final",
@@ -492,39 +588,97 @@ export const translations = {
         personalDataAuth: "Autorización para el Tratamiento de Datos Personales",
         continue: "Continuar"
       },
-      step2: {
+      step3: {
         title: "Elige el método de pago",
         subtitle: "Selecciona un método e ingresa los datos.",
-        card: "Tarjeta",
+        card: "Tarjeta Crédito/Débito",
         cardSoon: "El pago con tarjeta estará disponible pronto",
         soon: "próximamente",
         phoneLabel: "Número Nequi *",
         phoneHelp: "10 dígitos, debe comenzar con 3",
+        cardNumber: "Número de tarjeta *",
+        cardHolder: "Nombre del titular *",
+        expMonth: "Mes *",
+        expYear: "Año *",
+        cvc: "CVC *",
+        cardSecurity: "Los datos de tu tarjeta se envían directamente a Wompi y nunca se guardan en nuestros servidores.",
         sending: "Enviando...",
         continue: "Continuar"
       },
-      step3: {
+      step4: {
         title: "Aprueba en tu app Nequi",
-        instruction: "Abre tu app Nequi y acepta la solicitud de registro.",
+        instruction: "Abre tu app Nequi y acepta la solicitud de suscripción.",
         phone: "Teléfono",
         timeout: "Esperaremos hasta 2 minutos."
       },
-      step4: {
-        title: "¡Fuente de pago registrada!",
-        message: "A partir de ahora podrás hacer donaciones recurrentes con esta fuente.",
+      step5: {
+        title: "¡Donación recurrente configurada!",
+        message: "A partir de ahora te cobraremos de manera automática.",
+        nextBilling: "Próximo cobro",
+        frequency: "Frecuencia",
         type: "Tipo",
         phone: "Teléfono",
-        status: "Estado"
+        card: "Tarjeta",
+        expires: "Vence"
       },
       errors: {
         acceptance: "No se pudieron cargar los términos. Intenta de nuevo.",
         acceptTerms: "Debes aceptar los términos para continuar.",
         invalidEmail: "Ingresa un correo válido.",
         invalidPhone: "El número debe tener 10 dígitos y comenzar con 3.",
+        shortPassword: "La contraseña debe tener al menos 6 caracteres.",
+        passwordMismatch: "Las contraseñas no coinciden.",
+        passwordAck: "Debes confirmar que entiendes el uso de la contraseña.",
         tokenize: "No se pudo registrar el número en Nequi.",
+        tokenizeCard: "No se pudo tokenizar la tarjeta. Revisa los datos.",
+        invalidCardNumber: "El número de tarjeta no es válido.",
+        invalidCvc: "El CVC no es válido.",
+        invalidExpMonth: "El mes de expiración no es válido.",
+        invalidExpYear: "El año de expiración no es válido.",
+        invalidHolder: "Ingresa el nombre del titular.",
         timeout: "Pasó el tiempo sin aprobación. Intenta nuevamente.",
         declined: "La solicitud fue rechazada en Nequi. Intenta de nuevo.",
         backend: "No se pudo registrar la fuente de pago en el servidor."
+      }
+    },
+
+    // === CANCEL RECURRING DONATION ===
+    cancelRecurring: {
+      title: "Cancelar donación recurrente",
+      subtitle: "Verifica tu identidad para cancelar",
+      close: "Listo",
+      step1: {
+        title: "Inicia sesión",
+        subtitle: "Ingresa el correo y la contraseña que usaste al configurar la donación.",
+        email: "Correo electrónico *",
+        password: "Contraseña *",
+        passwordHelp: "La que creaste al registrar la donación recurrente.",
+        verifying: "Verificando...",
+        continue: "Continuar"
+      },
+      step2: {
+        title: "Confirma la cancelación",
+        warning: "Estás a punto de cancelar tu donación recurrente. Esta acción no se puede deshacer.",
+        amount: "Monto",
+        frequency: "Frecuencia",
+        destination: "Destino",
+        nextBilling: "Próximo cobro",
+        phone: "Teléfono",
+        back: "Volver",
+        confirm: "Cancelar donación",
+        canceling: "Cancelando..."
+      },
+      step3: {
+        title: "Donación recurrente cancelada",
+        message: "Tu donación recurrente ha sido cancelada. No te volveremos a cobrar."
+      },
+      errors: {
+        invalidEmail: "Ingresa un correo válido.",
+        missingPassword: "Ingresa tu contraseña.",
+        invalidCredentials: "Correo o contraseña incorrectos.",
+        notFound: "No se encontró una fuente de pago activa para este correo.",
+        generic: "No pudimos verificar tu identidad. Intenta de nuevo.",
+        cancel: "No se pudo cancelar la donación. Intenta de nuevo."
       }
     },
 

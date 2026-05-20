@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createDonation } from '../../services/donationService'
 import { useLanguage } from '../../translations/LanguageContext'
 import RecurringPaymentModal from './RecurringPaymentModal'
+import CancelRecurringModal from './CancelRecurringModal'
 
 function DonationForm() {
   const { t } = useLanguage()
@@ -25,6 +26,7 @@ function DonationForm() {
   const [success, setSuccess] = useState(false)
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [recurringOpen, setRecurringOpen] = useState(false)
+  const [cancelOpen, setCancelOpen] = useState(false)
 
   // Configuración desde .env
   const WOMPI_PUBLIC_KEY = import.meta.env.VITE_PUBLISHABLE_KEY
@@ -199,6 +201,46 @@ function DonationForm() {
       
       setLoading(false)
     }
+  }
+
+  // ===============================
+  // ABRIR MODAL DE PAGO RECURRENTE
+  // ===============================
+  const handleOpenRecurring = () => {
+    setError('')
+
+    if (
+      !formData.name ||
+      !formData.last_name ||
+      !formData.phone ||
+      !formData.email ||
+      !formData.identity_document ||
+      !formData.address ||
+      !formData.donation_value ||
+      formData.donation_destination.length === 0
+    ) {
+      setError(t('donation.errors.allFields'))
+      return
+    }
+
+    if (!privacyAccepted) {
+      setError(t('donationPrivacy.acceptRequired'))
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError(t('donation.errors.invalidEmail'))
+      return
+    }
+
+    const amount = Number(formData.donation_value)
+    if (isNaN(amount) || amount < 10000) {
+      setError(t('donation.errors.minAmount'))
+      return
+    }
+
+    setRecurringOpen(true)
   }
 
   // ===============================
@@ -577,7 +619,7 @@ function DonationForm() {
           {/* ===== BOTÓN PAGO RECURRENTE ===== */}
           <button
             type="button"
-            onClick={() => setRecurringOpen(true)}
+            onClick={handleOpenRecurring}
             disabled={loading}
             className="w-full font-bold py-4 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border-2"
             style={{ borderColor: '#92c83e', color: '#004990', backgroundColor: '#92c83e1a' }}
@@ -588,6 +630,17 @@ function DonationForm() {
             </span>
           </button>
 
+          {/* ===== LINK CANCELAR RECURRENTE ===== */}
+          <div className="text-center mt-3">
+            <button
+              type="button"
+              onClick={() => setCancelOpen(true)}
+              className="text-sm underline text-gray-500 hover:text-gray-700"
+            >
+              {t('donation.cancelRecurringLink')}
+            </button>
+          </div>
+
           <p className="text-xs text-gray-500 text-center mt-4">
             🔒 {t('donation.securePayment')}
           </p>
@@ -597,7 +650,21 @@ function DonationForm() {
       <RecurringPaymentModal
         open={recurringOpen}
         onClose={() => setRecurringOpen(false)}
-        initialEmail={formData.email}
+        donor={{
+          name: formData.name,
+          last_name: formData.last_name,
+          email: formData.email,
+          phone: formData.phone,
+          identity_document: formData.identity_document,
+          address: formData.address,
+          donation_destination: formData.donation_destination?.[0],
+          donation_value: Number(formData.donation_value) || 0
+        }}
+      />
+
+      <CancelRecurringModal
+        open={cancelOpen}
+        onClose={() => setCancelOpen(false)}
       />
     </section>
   )

@@ -5,7 +5,7 @@ FRONTEND=$(DIRECTORY)/React_TCS-Fundacion
 .PHONY: frontend nginx-reload deploy
 
 env:
-	cp $(DIRECTORY)/.env.frontend $(FRONTEND)/.env && \
+	cp $(DIRECTORY)/.env.frontend $(FRONTEND)/.env
 	@echo "Frontend .env creado correctamente"
 
 frontend: env

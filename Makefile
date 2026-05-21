@@ -1,11 +1,11 @@
 APP_ROOT=/home/eventos
-FRONTEND=$(APP_ROOT)/Donaciones/React_TCS-Fundacion
+DIRECTORY=$(APP_ROOT)/Donaciones
+FRONTEND=$(DIRECTORY)/React_TCS-Fundacion
 
 .PHONY: frontend nginx-reload deploy
 
 env:
-	@echo "VITE_API_URL=$$URL_FUNDACION" > $(FRONTEND)/.env
-	@echo "VITE_PUBLISHABLE_KEY=$$WOMPI_FUNDACION" >> $(FRONTEND)/.env
+	cp $(DIRECTORY)/.env.frontend $(FRONTEND)/.env && \
 	@echo "Frontend .env creado correctamente"
 
 frontend: env

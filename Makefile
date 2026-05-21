@@ -5,6 +5,7 @@ FRONTEND=$(APP_ROOT)/Donaciones/React_TCS-Fundacion
 
 env:
 	@echo "VITE_API_URL=$$URL_FUNDACION" > $(FRONTEND)/.env
+	@echo "VITE_PUBLISHABLE_KEY=$$WOMPI_FUNDACION" >> $(FRONTEND)/.env
 	@echo "Frontend .env creado correctamente"
 
 frontend: env

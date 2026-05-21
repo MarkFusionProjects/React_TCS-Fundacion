@@ -18,4 +18,4 @@ nginx-reload:
 	sudo systemctl reload nginx
 
 deploy: frontend nginx-reload
-	@echo "Despliegue TCS Teatro completo"
+	@echo "Despliegue Fundacion TCS completo"

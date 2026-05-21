@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FileText, Search, Download, RefreshCw, Calendar, Mail, Phone, User, DollarSign, CreditCard, Hash, AlertCircle, MapPin, IdCard, Target, Repeat, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { getRecurringCharges } from '../services/paymentSourceService';
+import api from '../services/api';
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -111,13 +111,7 @@ const AdminPanel = () => {
     try {
       console.log('🔄 Conectando al backend...');
       
-      // 🔄 CAMBIA ESTA URL por la de tu backend
-      const response = await axios.get('https://5qz4wrdx-3000.use2.devtunnels.ms/api/v1/wompitransaction/', {
-        timeout: 10000,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
+      const response = await api.get('/wompitransaction/');
       
       console.log('✅ Respuesta del backend:', response.data);
       

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { GraduationCap, Cpu, Users, Building2, HandHeart, Target, TrendingUp, ChevronDown } from 'lucide-react'
-import axios from 'axios'
+import api from '../../services/api'
 import { useLanguage } from '../../translations/LanguageContext'
 
 function WhatYouCanSupport() {
@@ -59,7 +59,7 @@ function WhatYouCanSupport() {
 
   const fetchTotalDonaciones = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/submissions')
+      const response = await api.get('/submissions')
       let donaciones = []
       if (Array.isArray(response.data)) {
         donaciones = response.data

@@ -3,7 +3,11 @@ FRONTEND=$(APP_ROOT)/Donaciones/React_TCS-Fundacion
 
 .PHONY: frontend nginx-reload deploy
 
-frontend:
+env:
+	@echo "VITE_API_URL=$$URL_FUNDACION" > $(FRONTEND)/.env
+	@echo "Frontend .env creado correctamente"
+
+frontend: env
 	cd $(FRONTEND) && \
 	npm install && \
 	npm run build

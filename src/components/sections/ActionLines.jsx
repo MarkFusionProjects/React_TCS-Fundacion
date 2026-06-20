@@ -30,10 +30,10 @@ function ActionLines() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="pt-8 pb-14 px-4 bg-white relative overflow-hidden">
-      <div className="max-w-6xl mx-auto relative z-10">
+    <section ref={sectionRef} className="pt-8 pb-14 px-0 md:px-2 bg-white relative overflow-hidden">
+      <div className="max-w-[1600px] mx-auto relative z-10">
         {/* Título */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 px-4 md:px-0">
           <h2
             className={`
               text-4xl md:text-5xl font-bold mb-4
@@ -65,9 +65,10 @@ function ActionLines() {
           </p>
         </div>
 
-        {/* Imagen de estrategia */}
+        {/* Imagen de estrategia — full-bleed para que se vea lo más grande posible */}
         <div
           className={`
+            relative left-1/2 -translate-x-1/2 w-screen max-w-none
             transition-all duration-1000 ease-out delay-500
             ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
           `}
@@ -75,7 +76,7 @@ function ActionLines() {
           <img
             src={language === 'en' ? '/images/Ingles/Estrategia_inglés.svg' : '/images/Testimonios/estrategia_español.svg'}
             alt={t('actionLines.title')}
-            className="w-full h-auto"
+            className="w-full h-auto block"
           />
         </div>
       </div>

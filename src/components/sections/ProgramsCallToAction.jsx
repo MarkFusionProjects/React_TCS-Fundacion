@@ -83,12 +83,12 @@ function ProgramsCallToAction() {
         w-full bg-gray-100 mt-8 mb-10 transition-all duration-1000 ease-out delay-300
         ${isVisible ? 'opacity-100' : 'opacity-0'}
       `}>
-        <div className="max-w-7xl mx-auto px-4 flex justify-center overflow-x-auto no-scrollbar">
-          <div className="flex">
+        <div className="max-w-7xl mx-auto px-2 md:px-4 flex md:justify-center">
+          <div className="flex w-full md:w-auto">
             <button
               onClick={() => handleTabChange('tab2')}
               className={`
-                px-5 md:px-8 py-3 md:py-4 font-bold text-base md:text-lg whitespace-nowrap transition-all duration-300 border-b-4
+                flex-1 md:flex-none px-2 md:px-8 py-3 md:py-4 font-bold text-xs md:text-lg leading-tight text-center md:whitespace-nowrap transition-all duration-300 border-b-4
                 ${activeTab === 'tab2'
                   ? 'bg-white text-[#004990] border-[#ec008c]'
                   : 'text-gray-500 border-transparent hover:text-[#004990] hover:bg-gray-50'
@@ -100,7 +100,7 @@ function ProgramsCallToAction() {
             <button
               onClick={() => handleTabChange('tab1')}
               className={`
-                px-5 md:px-8 py-3 md:py-4 font-bold text-base md:text-lg whitespace-nowrap transition-all duration-300 border-b-4
+                flex-1 md:flex-none px-2 md:px-8 py-3 md:py-4 font-bold text-xs md:text-lg leading-tight text-center md:whitespace-nowrap transition-all duration-300 border-b-4
                 ${activeTab === 'tab1'
                   ? 'bg-white text-[#004990] border-[#00aeef]'
                   : 'text-gray-500 border-transparent hover:text-[#004990] hover:bg-gray-50'
@@ -112,14 +112,15 @@ function ProgramsCallToAction() {
             <button
               onClick={() => handleTabChange('tab3')}
               className={`
-                px-5 md:px-8 py-3 md:py-4 font-bold text-base md:text-lg whitespace-nowrap transition-all duration-300 border-b-4
+                flex-1 md:flex-none px-2 md:px-8 py-3 md:py-4 font-bold text-xs md:text-lg leading-tight text-center md:whitespace-nowrap transition-all duration-300 border-b-4
                 ${activeTab === 'tab3'
                   ? 'bg-white text-[#004990] border-[#92c83e]'
                   : 'text-gray-500 border-transparent hover:text-[#004990] hover:bg-gray-50'
                 }
               `}
             >
-              Columbus by Columbus
+              <span className="md:hidden">Columbus<br/>by Columbus</span>
+              <span className="hidden md:inline">Columbus by Columbus</span>
             </button>
           </div>
         </div>

@@ -27,6 +27,7 @@ function DonationForm() {
   const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [recurringOpen, setRecurringOpen] = useState(false)
   const [cancelOpen, setCancelOpen] = useState(false)
+  const [frequency, setFrequency] = useState('once') // 'once' | 'recurring'
 
   // Configuración desde .env
   const WOMPI_PUBLIC_KEY = import.meta.env.VITE_PUBLISHABLE_KEY
@@ -248,7 +249,11 @@ function DonationForm() {
   // ===============================
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    // Teléfono y documento: solo dígitos
+    const sanitized = (name === 'phone' || name === 'identity_document')
+      ? value.replace(/\D/g, '')
+      : value
+    setFormData({ ...formData, [name]: sanitized })
   }
 
   const handleProgramToggle = (program) => {
@@ -289,7 +294,7 @@ function DonationForm() {
   return (
     <section
       id="donar"
-      className="scroll-mt-24 py-16 bg-gray-50"
+      className="scroll-mt-24 pt-10 md:pt-8 pb-16 bg-gray-50"
     >
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
@@ -323,84 +328,49 @@ function DonationForm() {
             </div>
           )}
 
-          {/* ===== DATOS PERSONALES ===== */}
-          <div className="space-y-4 mb-6">
-            <h4 className="font-semibold text-gray-700 text-lg">{t('donation.personalData')}</h4>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                name="name"
-                placeholder={t('donation.name')}
-                value={formData.name}
-                onChange={handleInputChange}
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-                onBlur={(e) => e.target.style.boxShadow = 'none'}
-              />
-              <input
-                name="last_name"
-                placeholder={t('donation.lastName')}
-                value={formData.last_name}
-                onChange={handleInputChange}
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-                onBlur={(e) => e.target.style.boxShadow = 'none'}
-              />
+          {/* ===== TIPO DE DONACIÓN (FRECUENCIA) ===== */}
+          <div className="mb-6">
+            <h4 className="font-semibold text-gray-700 text-lg mb-3">
+              {t('donation.frequencyTitle')}
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                { key: 'once', label: t('donation.frequencyOnce'), desc: t('donation.frequencyOnceDesc'), color: '#004990', icon: '💙' },
+                { key: 'recurring', label: t('donation.frequencyRecurring'), desc: t('donation.frequencyRecurringDesc'), color: '#92c83e', icon: '🔁' }
+              ].map((opt) => {
+                const isSelected = frequency === opt.key
+                return (
+                  <label
+                    key={opt.key}
+                    className={`flex items-start p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                      loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    style={{
+                      borderColor: isSelected ? opt.color : 'transparent',
+                      backgroundColor: `${opt.color}1f`,
+                      boxShadow: isSelected ? `0 4px 12px ${opt.color}55` : 'none'
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="donation_frequency"
+                      checked={isSelected}
+                      onChange={() => setFrequency(opt.key)}
+                      disabled={loading}
+                      className="mt-1 w-4 h-4 disabled:cursor-not-allowed"
+                      style={{ accentColor: opt.color }}
+                    />
+                    <div className="ml-3">
+                      <div className="text-sm font-semibold text-gray-800">
+                        <span className="mr-1">{opt.icon}</span>
+                        {opt.label}
+                      </div>
+                      <div className="text-xs text-gray-600 mt-0.5">{opt.desc}</div>
+                    </div>
+                  </label>
+                )
+              })}
             </div>
-
-            <input
-              name="identity_document"
-              placeholder={t('donation.document')}
-              value={formData.identity_document}
-              onChange={handleInputChange}
-              disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-              style={{ boxShadow: 'none' }}
-              onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-              onBlur={(e) => e.target.style.boxShadow = 'none'}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                name="phone"
-                placeholder={t('donation.phone')}
-                value={formData.phone}
-                onChange={handleInputChange}
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-                onBlur={(e) => e.target.style.boxShadow = 'none'}
-              />
-              <input
-                name="email"
-                type="email"
-                placeholder={t('donation.email')}
-                value={formData.email}
-                onChange={handleInputChange}
-                disabled={loading}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-                style={{ boxShadow: 'none' }}
-                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-                onBlur={(e) => e.target.style.boxShadow = 'none'}
-              />
-            </div>
-
-            <input
-              name="address"
-              placeholder={t('donation.address')}
-              value={formData.address}
-              onChange={handleInputChange}
-              disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
-              style={{ boxShadow: 'none' }}
-              onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
-              onBlur={(e) => e.target.style.boxShadow = 'none'}
-            />
           </div>
 
           {/* ===== DESTINO DE LA DONACIÓN ===== */}
@@ -542,6 +512,92 @@ function DonationForm() {
             </div>
           </div>
 
+          {/* ===== DATOS PERSONALES ===== */}
+          <div className="space-y-4 mb-6">
+            <h4 className="font-semibold text-gray-700 text-lg">{t('donation.personalData')}</h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                name="name"
+                placeholder={t('donation.name')}
+                value={formData.name}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                style={{ boxShadow: 'none' }}
+                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+                onBlur={(e) => e.target.style.boxShadow = 'none'}
+              />
+              <input
+                name="last_name"
+                placeholder={t('donation.lastName')}
+                value={formData.last_name}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                style={{ boxShadow: 'none' }}
+                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+                onBlur={(e) => e.target.style.boxShadow = 'none'}
+              />
+            </div>
+
+            <input
+              name="identity_document"
+              type="tel"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder={t('donation.document')}
+              value={formData.identity_document}
+              onChange={handleInputChange}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+              style={{ boxShadow: 'none' }}
+              onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+              onBlur={(e) => e.target.style.boxShadow = 'none'}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input
+                name="phone"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder={t('donation.phone')}
+                value={formData.phone}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                style={{ boxShadow: 'none' }}
+                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+                onBlur={(e) => e.target.style.boxShadow = 'none'}
+              />
+              <input
+                name="email"
+                type="email"
+                placeholder={t('donation.email')}
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={loading}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+                style={{ boxShadow: 'none' }}
+                onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+                onBlur={(e) => e.target.style.boxShadow = 'none'}
+              />
+            </div>
+
+            <input
+              name="address"
+              placeholder={t('donation.address')}
+              value={formData.address}
+              onChange={handleInputChange}
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+              style={{ boxShadow: 'none' }}
+              onFocus={(e) => e.target.style.boxShadow = '0 0 0 2px #004990'}
+              onBlur={(e) => e.target.style.boxShadow = 'none'}
+            />
+          </div>
+
           {/* ===== INFORMACIÓN CERTIFICADO ===== */}
           <div className="mb-6 p-4 bg-blue-50 border rounded-lg" style={{ borderColor: '#004990' }}>
             <h4 className="font-semibold mb-2 flex items-center" style={{ color: '#004990' }}>
@@ -586,13 +642,13 @@ function DonationForm() {
             </label>
           </div>
 
-          {/* ===== BOTÓN DE ENVÍO ===== */}
+          {/* ===== BOTÓN DE ENVÍO (segun frecuencia) ===== */}
           <button
             type="button"
-            onClick={handleSubmit}
+            onClick={frequency === 'recurring' ? handleOpenRecurring : handleSubmit}
             disabled={loading}
             className="w-full disabled:bg-gray-400 text-white font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl disabled:cursor-not-allowed hover:opacity-90"
-            style={{ backgroundColor: loading ? undefined : '#004990' }}
+            style={{ backgroundColor: loading ? undefined : (frequency === 'recurring' ? '#92c83e' : '#004990') }}
           >
             {loading ? (
               <span className="flex items-center justify-center">
@@ -603,31 +659,11 @@ function DonationForm() {
                 {t('donation.processing')}
               </span>
             ) : (
-              t('donation.button')
+              <span className="flex items-center justify-center gap-2">
+                {frequency === 'recurring' && <span>🔁</span>}
+                {frequency === 'recurring' ? t('donation.recurringButton') : t('donation.button')}
+              </span>
             )}
-          </button>
-
-          {/* ===== SEPARADOR ===== */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
-              {t('donation.or')}
-            </span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
-          {/* ===== BOTÓN PAGO RECURRENTE ===== */}
-          <button
-            type="button"
-            onClick={handleOpenRecurring}
-            disabled={loading}
-            className="w-full font-bold py-4 rounded-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed border-2"
-            style={{ borderColor: '#92c83e', color: '#004990', backgroundColor: '#92c83e1a' }}
-          >
-            <span className="flex items-center justify-center gap-2">
-              <span>🔁</span>
-              {t('donation.recurringButton')}
-            </span>
           </button>
 
           {/* ===== LINK CANCELAR RECURRENTE ===== */}

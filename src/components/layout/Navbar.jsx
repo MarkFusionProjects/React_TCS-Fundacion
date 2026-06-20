@@ -133,10 +133,20 @@ function Navbar() {
             </div>
 
             {/* Mobile Menu Button & Language Toggle */}
-            <div className="md:hidden flex items-center gap-3">
+            <div className="md:hidden flex items-center gap-2">
+              {/* Botón Donar (móvil) — al lado del logo */}
+              <Link
+                to="/donar"
+                onClick={closeMenu}
+                className="text-white font-bold py-1.5 px-4 rounded-full text-sm shadow-md transition-all duration-300 hover:scale-105 active:scale-95"
+                style={{ backgroundColor: '#92c83e' }}
+              >
+                {t('nav.donate')}
+              </Link>
+
               {/* Botón de idioma en móvil */}
               <LanguageToggle />
-              
+
               <button
                 onClick={toggleMenu}
                 className="p-2 rounded-lg hover:bg-gray-100 transition-all duration-300 hover:scale-110 active:scale-95"

@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Evita scroll horizontal accidental por gráficos edge-to-edge o tablas anchas */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}

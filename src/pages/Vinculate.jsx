@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../translations/LanguageContext'
 
 function Vinculate() {
   const { language, t } = useLanguage()
+  const navigate = useNavigate()
   const refs = useRef({})
   const [activeSection, setActiveSection] = useState(null)
   const [pressedBtn, setPressedBtn] = useState(null)
@@ -15,6 +17,12 @@ function Vinculate() {
       pending: false,
       color: '#004990',
       bg: '#f3f4f6',
+    },
+    {
+      id: 'donaciones-dinero',
+      title: t('vinculate.moneyDonations'),
+      color: '#00aeef',
+      navigateTo: '/donar',
     },
     {
       id: 'donaciones-especie',
@@ -79,6 +87,18 @@ function Vinculate() {
     setTimeout(() => setPressedBtn(null), 600)
   }
 
+  const handleButtonClick = (s) => {
+    if (s.navigateTo) {
+      setPressedBtn(s.id)
+      setTimeout(() => {
+        navigate(s.navigateTo)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }, 150)
+      return
+    }
+    scrollTo(s.id)
+  }
+
   // Detectar sección visible al hacer scroll manual
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -110,7 +130,7 @@ function Vinculate() {
           </p>
 
           {/* ─── BOTONES DE NAVEGACIÓN ─── */}
-          <div className="flex flex-wrap justify-center gap-3 mt-10">
+          <div className="flex flex-wrap justify-center gap-3 mt-10 mx-auto md:grid md:grid-cols-3 md:max-w-3xl md:justify-items-center md:items-center">
             {secciones.map((s, i) => {
               const isActive = activeSection === s.id
               const isPressed = pressedBtn === s.id
@@ -118,15 +138,15 @@ function Vinculate() {
               return (
                 <button
                   key={s.id}
-                  onClick={() => scrollTo(s.id)}
+                  onClick={() => handleButtonClick(s)}
                   className={`font-bold px-6 py-3 rounded-full text-sm transition-all duration-300 shadow-md border-2 ${
                     isPressed ? 'scale-90' : 'hover:scale-105'
                   }`}
                   style={{
-                    backgroundColor: isActive ? '#004990' : (isSolid ? '#004990' : '#fff'),
-                    borderColor: '#004990',
-                    color: isActive ? '#fff' : (isSolid ? '#fff' : '#004990'),
-                    boxShadow: isActive ? '0 6px 20px rgba(0,73,144,0.45)' : undefined,
+                    backgroundColor: isActive ? s.color : (isSolid ? s.color : '#fff'),
+                    borderColor: s.color,
+                    color: isActive ? '#fff' : (isSolid ? '#fff' : s.color),
+                    boxShadow: isActive ? `0 6px 20px ${s.color}73` : undefined,
                   }}
                 >
                   {s.title}
@@ -139,7 +159,7 @@ function Vinculate() {
 
       {/* ─── SECCIONES ─── */}
       <div className="pb-20">
-        {secciones.map((s) => {
+        {secciones.filter(s => !s.navigateTo).map((s) => {
           const isActive = activeSection === s.id
           return (
             <section

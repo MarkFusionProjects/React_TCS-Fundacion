@@ -50,8 +50,8 @@ function Footer() {
                 <li><Link to="/nosotros#estrategia" className="hover:text-white transition-colors">{t('footer.strategy')}</Link></li>
                 <li><Link to="/nosotros#lo-que-nos-guia" className="hover:text-white transition-colors">{t('footer.whatGuidesUs')}</Link></li>
                 <li><Link to="/nosotros#nuestra-historia" className="hover:text-white transition-colors">{t('footer.ourHistory')}</Link></li>
-                <li><Link to="/nosotros#informes" className="hover:text-white transition-colors">{t('footer.managementReports')}</Link></li>
                 <li><Link to="/nosotros#aliados" className="hover:text-white transition-colors">{t('footer.allies')}</Link></li>
+                <li><Link to="/nosotros#informes" className="hover:text-white transition-colors">{t('footer.managementReports')}</Link></li>
               </ul>
             </div>
 

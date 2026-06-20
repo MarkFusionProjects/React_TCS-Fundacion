@@ -5,7 +5,7 @@ function Testimonials() {
   const { t } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState(null)
-  const [expandedIndex, setExpandedIndex] = useState(null)
+  const [modalIndex, setModalIndex] = useState(null)
   const sectionRef = useRef(null)
 
   const testimonials = [
@@ -59,9 +59,19 @@ function Testimonials() {
     }
   }, [])
 
-  const toggleExpand = (index) => {
-    setExpandedIndex(expandedIndex === index ? null : index)
-  }
+  const openModal = (index) => setModalIndex(index)
+  const closeModal = () => setModalIndex(null)
+
+  useEffect(() => {
+    if (modalIndex === null) return
+    const onKey = (e) => { if (e.key === 'Escape') closeModal() }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [modalIndex])
 
   return (
     <section ref={sectionRef} className="bg-gradient-to-br from-gray-50 to-blue-50 py-16 relative overflow-hidden">
@@ -144,36 +154,21 @@ function Testimonials() {
               <div className="p-6 relative">
                 {/* Decoración sutil */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-                
+
                 <div className="text-gray-700 text-sm leading-relaxed">
-                  {expandedIndex === index ? (
-                    <div className="space-y-3">
-                      {testimonial.text.split('\n').map((paragraph, idx) => (
-                        <p 
-                          key={idx}
-                          className="transform transition-all duration-300"
-                        >
-                          {paragraph}
-                        </p>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="transform transition-all duration-300">
-                      {testimonial.excerpt}
-                    </p>
-                  )}
+                  <p className="transform transition-all duration-300">
+                    {testimonial.excerpt}
+                  </p>
                 </div>
 
-                {/* Botón Leer más / Leer menos */}
+                {/* Botón Leer más (abre modal) */}
                 <button
-                  onClick={() => toggleExpand(index)}
+                  onClick={() => openModal(index)}
                   className="mt-4 text-sm font-semibold hover:underline transition-all duration-300 flex items-center gap-1 group/btn"
                   style={{ color: testimonial.color }}
                 >
-                  {expandedIndex === index ? t('testimonials.readLess') : t('testimonials.readMore')}
-                  <span className={`transform transition-transform duration-300 ${expandedIndex === index ? 'rotate-180' : 'rotate-0'}`}>
-                    ▼
-                  </span>
+                  {t('testimonials.readMore')}
+                  <span>▼</span>
                 </button>
               </div>
             </div>
@@ -181,7 +176,65 @@ function Testimonials() {
         </div>
       </div>
 
+      {/* ─── MODAL "Leer más" ─── */}
+      {modalIndex !== null && testimonials[modalIndex] && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={closeModal}
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative h-56 md:h-72 overflow-hidden flex-shrink-0">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10" />
+              <img
+                src={testimonials[modalIndex].image}
+                alt={testimonials[modalIndex].name}
+                className="w-full h-full object-cover"
+                style={{ objectPosition: testimonials[modalIndex].imagePosition }}
+              />
+              <button
+                onClick={closeModal}
+                aria-label="Cerrar"
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-all hover:scale-110"
+              >
+                <span className="text-xl font-bold" style={{ color: '#004990' }}>×</span>
+              </button>
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                <div
+                  className="inline-block px-3 py-1 rounded-full text-white text-xs font-semibold mb-2 shadow-lg"
+                  style={{ backgroundColor: testimonials[modalIndex].color }}
+                >
+                  {testimonials[modalIndex].role}
+                </div>
+                <h4 className="font-bold text-2xl md:text-3xl text-white">
+                  {testimonials[modalIndex].name}
+                </h4>
+              </div>
+            </div>
+            <div className="p-6 md:p-8 overflow-y-auto text-gray-700 text-sm md:text-base leading-relaxed space-y-3">
+              {testimonials[modalIndex].text.split('\n').map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scale-in {
+          from { opacity: 0; transform: scale(0.92); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in { animation: fade-in 0.2s ease-out; }
+        .animate-scale-in { animation: scale-in 0.25s ease-out; }
+
         @keyframes blob {
           0%, 100% {
             transform: translate(0, 0) scale(1);

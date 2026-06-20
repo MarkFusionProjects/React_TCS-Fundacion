@@ -57,7 +57,12 @@ const getMainDocs = (t) => [
   },
   {
     label: t('nosotros.assemblyMinutes'),
-    url: '/images/Testimonios/politicas/Extracto%20del%20Acta%20No.%2098%20(1)%20(2).pdf',
+    url: '/images/Testimonios/politicas/1.%20Extracto%20de%20Acta%20No.%2098%20(1)%20(1).pdf',
+    active: true
+  },
+  {
+    label: t('nosotros.boardAndManagement'),
+    url: '/images/Testimonios/politicas/Certificaci%C3%B3n%20Cargos%20Directivos%20y%20Gerenciales%202025.pdf',
     active: true
   },
 ]
@@ -285,9 +290,9 @@ function Nosotros() {
       </section>
 
       {/* ─── NUESTRA ESTRATEGIA ─── */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#f8fafc' }}>
+      <section id="estrategia" className="scroll-mt-24 py-16 px-0 md:px-4 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 px-4 md:px-0">
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: '#004990' }}>
               {t('nosotros.strategy')}
             </h2>
@@ -296,13 +301,13 @@ function Nosotros() {
           <img
             src={language === 'en' ? '/images/Ingles/Estrategia_inglés.svg' : '/images/Testimonios/estrategia_español.svg'}
             alt="Nuestra estrategia"
-            className="w-full h-auto"
+            className="w-full h-auto block"
           />
         </div>
       </section>
 
       {/* ─── LO QUE NOS GUÍA ─── */}
-      <section id="lo-que-nos-guia" className="py-16 px-4 bg-white">
+      <section id="lo-que-nos-guia" className="scroll-mt-24 py-16 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
 
           {/* Título */}
@@ -349,7 +354,7 @@ function Nosotros() {
       <section
         id="nuestra-historia"
         ref={sectionRef}
-        className="py-16 px-4"
+        className="scroll-mt-24 py-16 px-4"
         style={{ backgroundColor: '#f8fafc' }}
       >
         <div className="max-w-5xl mx-auto">
@@ -437,15 +442,37 @@ function Nosotros() {
             </div>
             </div>{/* fin overflow-x-auto */}
 
-            {/* Imagen */}
-            <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white">
-              <img
-                key={current}
-                src={img(slides[current].img)}
-                alt={slides[current].year}
-                className="w-full h-auto select-none historia-slide-img"
-                draggable={false}
-              />
+            {/* Imagen + flechas (flechas por fuera en desktop) */}
+            <div className="relative md:px-16">
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white">
+                <img
+                  key={current}
+                  src={img(slides[current].img)}
+                  alt={slides[current].year}
+                  className="w-full h-auto select-none historia-slide-img"
+                  draggable={false}
+                />
+              </div>
+
+              {/* Flecha izquierda */}
+              <button
+                onClick={() => setCurrent((current - 1 + slides.length) % slides.length)}
+                aria-label="Anterior"
+                className="absolute left-2 md:left-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 z-10"
+                style={{ border: '2px solid #004990' }}
+              >
+                <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" style={{ color: '#004990' }} />
+              </button>
+
+              {/* Flecha derecha */}
+              <button
+                onClick={() => setCurrent((current + 1) % slides.length)}
+                aria-label="Siguiente"
+                className="absolute right-2 md:right-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110 active:scale-95 z-10"
+                style={{ border: '2px solid #004990' }}
+              >
+                <ChevronRight className="w-5 h-5 md:w-6 md:h-6" style={{ color: '#004990' }} />
+              </button>
             </div>
           </div>
         </div>
@@ -468,7 +495,7 @@ function Nosotros() {
       </section>
 
       {/* ─── DOCUMENTOS DE INTERÉS ─── */}
-      <section id="informes" className="py-16 px-4 bg-white">
+      <section id="informes" className="scroll-mt-24 py-16 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
 
           {/* Título */}
@@ -537,12 +564,26 @@ function Nosotros() {
                 </a>
               ))}
             </div>
-            {/* ── Directivos y Gerenciales ── */}
+            {/* ── Régimen Tributario Especial Fundación TCS ── */}
             <div className="mb-14 mt-14">
-              <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: '#004990' }}>
-                <span className="w-1 h-6 rounded-full inline-block" style={{ backgroundColor: '#92c83e' }} />
-                {t('nosotros.directivos')}
-              </h3>
+              {/* Título */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: '#004990' }}>
+                  {t('nosotros.rteTitle')}
+                </h2>
+                <div className="w-20 h-1 mx-auto rounded-full" style={{ backgroundColor: '#004990' }} />
+              </div>
+
+              {/* Párrafo legal + link DIAN */}
+              <p
+                className="text-gray-700 text-base leading-relaxed mb-8"
+                dangerouslySetInnerHTML={{ __html: t('nosotros.rteDesc') }}
+              />
+
+              {/* Documentos */}
+              <p className="text-gray-700 text-base font-semibold mb-6">
+                {t('nosotros.rteDocsIntro')}
+              </p>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 {mainDocs.map((doc, i) => {

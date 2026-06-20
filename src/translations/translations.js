@@ -93,10 +93,10 @@ export const translations = {
         full: "Every Tuesday and Saturday, Santiago arrives at The Columbus School to be part of the TCS robotics team. He is one of the Foundation's scholarship students and studies at I.E. Martín Eduardo Ríos Llanos. Within the team, he is part of the mechanical design group, a space that connects with something he has always loved: taking things apart, putting them back together, and understanding how they work. Over this process, he has learned to use tools such as drills and laser cutters, as well as design software that has allowed him to materialize his ideas and turn them into real projects. This experience has also given him the opportunity to meet new people, build friendships, and share with classmates he never imagined he would meet. Today, Santiago dreams of studying programming and sees this team as an opportunity to continue learning and move, step by step, toward the future he wants to build."
       },
       cristobal: {
-        name: "Camila and María Luisa",
+        name: "María Luisa and Camila",
         role: "English in Action - TCS Volunteers",
-        excerpt: "Camila and María Luisa are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.",
-        full: "Camila and María Luisa are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.\nEvery Wednesday, after school, they dedicate their time to teaching classes and creating spaces where English is experienced in a closer, more fun and dynamic way. Beyond teaching vocabulary or practicing conversations, they aim for students to gain confidence, get excited about learning, and discover new opportunities through the language.\nFor Camila, one of her biggest motivations is seeing the change that happens little by little in the students: how they begin to get more excited about learning, how they participate with more confidence, and how English stops feeling distant and becomes a real possibility.\nFor María Luisa, volunteering has been an opportunity to understand other realities, grow in empathy, and discover that even small actions and a few hours of time can generate a significant impact on the lives of others.\nTogether, they have turned their motivations into real actions that today generate learning and new opportunities for other young people."
+        excerpt: "María Luisa and Camila are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.",
+        full: "María Luisa and Camila are students at The Columbus School and volunteers of English in Action, a program that strengthens the English skills of students from Institución Educativa Las Palmas.\nEvery Wednesday, after school, they dedicate their time to teaching classes and creating spaces where English is experienced in a closer, more fun and dynamic way. Beyond teaching vocabulary or practicing conversations, they aim for students to gain confidence, get excited about learning, and discover new opportunities through the language.\nFor María Luisa, volunteering has been an opportunity to understand other realities, grow in empathy, and discover that even small actions and a few hours of time can generate a significant impact on the lives of others.\nFor Camila, one of her biggest motivations is seeing the change that happens little by little in the students: how they begin to get more excited about learning, how they participate with more confidence, and how English stops feeling distant and becomes a real possibility.\nTogether, they have turned their motivations into real actions that today generate learning and new opportunities for other young people."
       },
       nicolas: {
         name: "Nicolás Zuleta",
@@ -120,6 +120,12 @@ export const translations = {
       phone: "Phone *",
       email: "Email *",
       address: "Address *",
+
+      frequencyTitle: "Donation type *",
+      frequencyOnce: "One-time donation",
+      frequencyOnceDesc: "A single payment",
+      frequencyRecurring: "Recurring donation",
+      frequencyRecurringDesc: "Automatic charges (weekly, biweekly or monthly)",
 
       destination: "Destination of Your Donation *",
       destinationSubtitle: "Select a program you wish to support:",
@@ -320,6 +326,7 @@ export const translations = {
       title: "Join our purpose",
       subtitle: "The Foundation is also built through the participation of our community. Discover how you can get involved and contribute to our projects.",
       volunteering: "Volunteering",
+      moneyDonations: "Money donations",
       inKindDonations: "In-kind Donations",
       socialService: "Student social hours",
       commercialAllies: "Commercial allies",
@@ -359,7 +366,8 @@ export const translations = {
       report2025Desc2: "This Management Report reflects a year of progress, strengthening our programs, aligning our work with the school's educational mission, and expanding opportunities for TCS students to learn through service. Through these experiences, students continue to develop leadership, empathy, and a strong sense of purpose.",
       viewReport2025: "View 2025 report",
       historicReports: "Management reports archive",
-      directivos: "Board and management",
+      directivos: "Board of Directors",
+      boardAndManagement: "Directors and Management",
       comingSoon: "Coming soon",
       annualReport: "Annual Report 2025",
       statutes: "Bylaws",
@@ -367,7 +375,11 @@ export const translations = {
       financialStatements: "Financial Statements 2025",
       webCertificate: "Web Registry Requirements Certificate",
       legalRepCertificate: "Legal Representative Criminal Record Certificate",
-      assemblyMinutes: "General Assembly Minutes 2026"
+      assemblyMinutes: "Board of Directors Minutes 2026",
+      rteTitle: "Special Tax Regime TCS Foundation",
+      rteDesc: "In accordance with Law 1869 of 106, Single Regulatory Decree 1625 of 2016, Decree 2150 of 2017 and Title VI of the first book of the National Tax Statute, Fundación The Columbus School, NIT 800,188.329-7, makes available to civil society and the general public the following information regarding the requirements for access to the Special Tax Regime – RTE of the income tax, so that comments may be made about the entity. If you wish to make any comment or statement about the entity and/or the related information below, you may do so through the following link enabled by the National Tax and Customs Directorate: <a href='https://www.dian.gov.co/impuestos/sociedades/Regimen-Tributario-Especial-RTE/Comentarios-Sociedad-Civil/Paginas/default.aspx' target='_blank' rel='noopener noreferrer' style='color:#004990;word-break:break-word;text-decoration:underline;'>https://www.dian.gov.co/impuestos/sociedades/Regimen-Tributario-Especial-RTE/Comentarios-Sociedad-Civil/Paginas/default.aspx</a>",
+      rteDocsIntro: "We attach documentation of public interest:",
+      clickHere: "click here"
     },
 
     // === FOOTER ===
@@ -382,7 +394,7 @@ export const translations = {
       strategy: "Strategy",
       whatGuidesUs: "What guides us",
       ourHistory: "Our history",
-      managementReports: "Management Reports",
+      managementReports: "Special Tax Regime",
       allies: "Allies",
       getInvolved: "Get involved",
       volunteering: "Volunteering",
@@ -492,10 +504,10 @@ export const translations = {
         full: "Todos los martes y sábados, Santiago llega a The Columbus School para hacer parte del equipo de robótica TCS. Es uno de los estudiantes becados de la Fundación y estudia en la Institución Educativa Martín Eduardo Ríos Llanos. Dentro del equipo, hace parte del grupo de diseño mecánico, un espacio que conecta con algo que siempre le ha gustado: armar, desarmar y entender cómo funcionan las cosas. A lo largo de este proceso, ha aprendido a usar herramientas como taladros y cortadoras láser, además de programas de diseño que le han permitido materializar sus ideas y convertirlas en proyectos reales. Esta experiencia también le ha dado la oportunidad de conocer nuevas personas, construir amistades y compartir con compañeros con quienes antes no imaginaba coincidir. Hoy, Santiago sueña con estudiar programación y ve en este equipo una oportunidad para seguir aprendiendo y acercarse, paso a paso, al futuro que quiere construir."
       },
       cristobal: {
-        name: "Camila y María Luisa",
+        name: "María Luisa y Camila",
         role: "English in Action - Voluntarias TCS",
-        excerpt: "Camila y María Luisa son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.",
-        full: "Camila y María Luisa son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.\nCada miércoles, después del colegio, dedican su tiempo a dar las clases y crear espacios donde el inglés se vive de una manera más cercana, divertida y dinámica. Más allá de enseñar vocabulario o practicar conversaciones, buscan que los estudiantes ganen confianza, se emocionen por aprender y descubran nuevas oportunidades a través del idioma.\nPara Camila, una de las mayores motivaciones es ver el cambio que ocurre poco a poco en los estudiantes: cómo empiezan a emocionarse más por aprender, cómo participan con más seguridad y cómo el inglés deja de sentirse lejano para convertirse en una posibilidad real.\nPara María Luisa, el voluntariado ha sido una oportunidad para entender otras realidades, crecer en empatía y descubrir que incluso pequeñas acciones y unas horas de tiempo pueden generar un impacto significativo en la vida de otras personas.\nJuntas, han convertido sus motivaciones en acciones reales que hoy generan aprendizaje y nuevas oportunidades para otros jóvenes."
+        excerpt: "María Luisa y Camila son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.",
+        full: "María Luisa y Camila son estudiantes de The Columbus School y voluntarias de English in Action, un programa que fortalece las habilidades en inglés de estudiantes de la Institución Educativa Las Palmas.\nCada miércoles, después del colegio, dedican su tiempo a dar las clases y crear espacios donde el inglés se vive de una manera más cercana, divertida y dinámica. Más allá de enseñar vocabulario o practicar conversaciones, buscan que los estudiantes ganen confianza, se emocionen por aprender y descubran nuevas oportunidades a través del idioma.\nPara María Luisa, el voluntariado ha sido una oportunidad para entender otras realidades, crecer en empatía y descubrir que incluso pequeñas acciones y unas horas de tiempo pueden generar un impacto significativo en la vida de otras personas.\nPara Camila, una de las mayores motivaciones es ver el cambio que ocurre poco a poco en los estudiantes: cómo empiezan a emocionarse más por aprender, cómo participan con más seguridad y cómo el inglés deja de sentirse lejano para convertirse en una posibilidad real.\nJuntas, han convertido sus motivaciones en acciones reales que hoy generan aprendizaje y nuevas oportunidades para otros jóvenes."
       },
       nicolas: {
         name: "Nicolás Zuleta",
@@ -519,6 +531,12 @@ export const translations = {
       phone: "Teléfono *",
       email: "Email *",
       address: "Dirección *",
+
+      frequencyTitle: "Tipo de donación *",
+      frequencyOnce: "Donación de una sola vez",
+      frequencyOnceDesc: "Un único pago",
+      frequencyRecurring: "Donación recurrente",
+      frequencyRecurringDesc: "Cobros automáticos (semanal, quincenal o mensual)",
 
       destination: "Destino de tu donación *",
       destinationSubtitle: "Selecciona un programa que deseas apoyar:",
@@ -719,6 +737,7 @@ export const translations = {
       title: "Súmate a nuestro propósito",
       subtitle: "La Fundación también se construye con la participación de nuestra comunidad. Descubre cómo puedes vincularte y aportar a nuestros proyectos.",
       volunteering: "Voluntariado",
+      moneyDonations: "Donaciones en dinero",
       inKindDonations: "Donaciones en especie",
       socialService: "Horas sociales de estudiantes",
       commercialAllies: "Aliados comerciales",
@@ -758,7 +777,8 @@ export const translations = {
       report2025Desc2: "El <strong>Informe de Gestión 2025</strong> recoge este proceso: un año en el que fortalecimos nuestros programas, alineamos nuestro trabajo con la misión educativa del colegio y seguimos creando oportunidades para que los estudiantes TCS vivan el aprendizaje a través del servicio, desarrollando liderazgo, empatía y sentido de propósito.",
       viewReport2025: "Ver informe 2025",
       historicReports: "Histórico de informes de gestión",
-      directivos: "Directivos y gerenciales",
+      directivos: "Consejo Directivo",
+      boardAndManagement: "Directivos y Gerenciales",
       comingSoon: "Próximamente",
       annualReport: "Informe anual 2025",
       statutes: "Estatutos",
@@ -766,7 +786,11 @@ export const translations = {
       financialStatements: "Estados financieros 2025",
       webCertificate: "Certificado requisitos registro web",
       legalRepCertificate: "Certificado representante legal antecedentes judiciales",
-      assemblyMinutes: "Acta de asamblea general 2026"
+      assemblyMinutes: "Acta de Consejo Directivo 2026",
+      rteTitle: "Régimen Tributario Especial Fundación TCS",
+      rteDesc: "De conformidad con la ley 1869 de 106, el Decreto Único Reglamentario 1625 de 2016, Decreto 2150 de 2017 y el título VI del libro primero del Estatuto Tributario Nacional, Fundación The Columbus School, NIT 800,188.329-7, pone a disposición de la sociedad civil y del público en general la siguiente información sobre los requisitos de acceso al Régimen Tributario Especial – RTE del impuesto sobre la Renta, para puedan realizar comentarios sobre la entidad. Si desea realizar algún comentario o pronunciamiento sobre la entidad y/o la información relacionada a continuación lo puede realizar por medio del siguiente link habilitado por la Dirección de Impuestos y Aduanas Nacionales: <a href='https://www.dian.gov.co/impuestos/sociedades/Regimen-Tributario-Especial-RTE/Comentarios-Sociedad-Civil/Paginas/default.aspx' target='_blank' rel='noopener noreferrer' style='color:#004990;word-break:break-word;text-decoration:underline;'>https://www.dian.gov.co/impuestos/sociedades/Regimen-Tributario-Especial-RTE/Comentarios-Sociedad-Civil/Paginas/default.aspx</a>",
+      rteDocsIntro: "Anexamos documentación de interés público:",
+      clickHere: "haz click aquí"
     },
 
     // === FOOTER ===
@@ -781,7 +805,7 @@ export const translations = {
       strategy: "Estrategia",
       whatGuidesUs: "Lo que nos guía",
       ourHistory: "Nuestra historia",
-      managementReports: "Informes de Gestión",
+      managementReports: "Régimen Tributario Especial",
       allies: "Aliados",
       getInvolved: "Vincúlate",
       volunteering: "Voluntariado",

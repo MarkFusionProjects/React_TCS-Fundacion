@@ -574,11 +574,10 @@ function Nosotros() {
                 <div className="w-20 h-1 mx-auto rounded-full" style={{ backgroundColor: '#004990' }} />
               </div>
 
-              {/* Párrafo legal + link DIAN */}
-              <p
-                className="text-gray-700 text-base leading-relaxed mb-8"
-                dangerouslySetInnerHTML={{ __html: t('nosotros.rteDesc') }}
-              />
+              {/* Párrafo legal */}
+              <p className="text-gray-700 text-base leading-relaxed mb-8">
+                {t('nosotros.rteDesc')}
+              </p>
 
               {/* Documentos */}
               <p className="text-gray-700 text-base font-semibold mb-6">

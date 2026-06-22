@@ -36,7 +36,7 @@ const getMainDocs = (t) => [
   },
   {
     label: t('nosotros.taxForm'),
-    url: null,
+    url: '/images/Testimonios/politicas/Renovaci%C3%B3n%20RTE%202026%20Fundaci%C3%B3n%20TCS.pdf',
     active: true,
     clickHere: true
   },
@@ -52,7 +52,7 @@ const getMainDocs = (t) => [
   },
   {
     label: t('nosotros.legalRepCertificate'),
-    url: '/images/Testimonios/politicas/Certificado%20Representante%20Legal%20Antecedentes%20Judiciales%202025%20(3).pdf',
+    url: '/images/Testimonios/politicas/Certificado_Representante_Legal_Antecedentes_Judiciales_2025_Fundaci%C3%B3n.%20(1).pdf',
     active: true
   },
   {
@@ -62,7 +62,7 @@ const getMainDocs = (t) => [
   },
   {
     label: t('nosotros.boardAndManagement'),
-    url: null,
+    url: '/images/Testimonios/politicas/Certificaci%C3%B3n%20Cargos%20Directivos%20y%20Gerenciales%202025.docx%20%20(2)%20(2)%20(1).pdf',
     active: true
   },
 ]
@@ -570,6 +570,10 @@ function Nosotros() {
                 <span className="w-1 h-6 rounded-full inline-block" style={{ backgroundColor: '#92c83e' }} />
                 {t('nosotros.directivos')}
               </h3>
+
+              <p className="text-sm leading-relaxed mb-6 text-gray-600">
+                {t('nosotros.directivosDesc')}
+              </p>
 
               <div className="grid sm:grid-cols-2 gap-4">
                 {mainDocs.map((doc, i) => {

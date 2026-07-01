@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { createDonation } from '../../services/donationService'
+import { createDonation, generateSignature } from '../../services/donationService'
 import { useLanguage } from '../../translations/LanguageContext'
 import RecurringPaymentModal from './RecurringPaymentModal'
 import CancelRecurringModal from './CancelRecurringModal'
@@ -67,18 +67,25 @@ function DonationForm() {
   // ===============================
   // ABRIR CHECKOUT DE WOMPI
   // ===============================
-  const openWompiCheckout = (reference, amount) => {
+  const openWompiCheckout = (reference, amount, signature) => {
     if (!window.WidgetCheckout) {
       setError('Error: Widget de Wompi no cargado. Recarga la página.')
       setLoading(false)
       return
     }
 
+    // ⚠️ amountInCents, reference y currency deben ser EXACTAMENTE los mismos
+    // valores con los que el backend generó la firma de integridad.
+    const amountInCents = amount * 100
+
     const checkout = new window.WidgetCheckout({
       currency: 'COP',
-      amountInCents: amount * 100, // Wompi requiere el monto en centavos
+      amountInCents, // Wompi requiere el monto en centavos
       reference: reference,
       publicKey: WOMPI_PUBLIC_KEY,
+      signature: {
+        integrity: signature // Firma de integridad generada por el backend
+      },
       redirectUrl: `${window.location.origin}/donations/success`, // URL de éxito
     })
 
@@ -185,8 +192,16 @@ function DonationForm() {
         throw new Error('El servidor no devolvió una referencia válida')
       }
 
+      // ===== GENERAR FIRMA DE INTEGRIDAD (requerida por Wompi en producción) =====
+      // Debe usar los mismos valores (reference, monto en centavos, moneda) que el widget.
+      const signature = await generateSignature({
+        reference,
+        amount_in_cents: donationAmount * 100,
+        currency: 'COP'
+      })
+
       // ===== ABRIR PASARELA DE WOMPI =====
-      openWompiCheckout(reference, donationAmount)
+      openWompiCheckout(reference, donationAmount, signature)
 
     } catch (err) {
       console.error('❌ Error al procesar la donación:', err)

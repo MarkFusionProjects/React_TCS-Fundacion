@@ -16,6 +16,34 @@ export const createDonation = async (donationData) => {
 }
 
 /**
+ * Generar la firma de integridad requerida por Wompi.
+ * Los valores enviados aquí (reference, amount_in_cents, currency) DEBEN ser
+ * exactamente los mismos que se pasan luego al widget de Wompi.
+ * @param {Object} params
+ * @param {string} params.reference - Referencia de la donación (DON-...)
+ * @param {number} params.amount_in_cents - Monto en centavos (valor * 100)
+ * @param {string} [params.currency='COP'] - Moneda
+ * @returns {Promise<string>} - La firma (data.signature)
+ */
+export const generateSignature = async ({ reference, amount_in_cents, currency = 'COP' }) => {
+  try {
+    const response = await api.post('/wompitransaction/generate-signature', {
+      reference,
+      amount_in_cents,
+      currency
+    })
+    const signature = response.data?.data?.signature
+    if (!signature) {
+      throw new Error('El servidor no devolvió una firma válida')
+    }
+    return signature
+  } catch (error) {
+    console.error('Error al generar la firma:', error)
+    throw error
+  }
+}
+
+/**
  * Obtener todas las donaciones (para administración)
  * @returns {Promise<Array>} - Lista de donaciones
  */

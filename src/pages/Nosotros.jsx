@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLanguage } from '../translations/LanguageContext'
-import { ChevronLeft, ChevronRight, FileText, ExternalLink, Clock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 
 const alianzasLogos = [
   '/images/Testimonios/60.png',
@@ -20,51 +20,6 @@ const alianzasLogos = [
   '/images/Testimonios/73.jpeg',
   '/images/Testimonios/74.jpeg',
   '/images/Testimonios/75.jpeg',
-]
-
-const getMainDocs = (t) => [
-  {
-    label: t('nosotros.annualReport'),
-    url: 'https://heyzine.com/flip-book/4a19fb0490.html#page/1',
-    active: true
-  },
-  {
-    label: t('nosotros.statutes'),
-    url: '/images/Testimonios/politicas/ESTATUTOS%20FUNDACI%C3%93N%202025%20(2).pdf',
-    active: true,
-    clickHere: true
-  },
-  {
-    label: t('nosotros.taxForm'),
-    url: '/images/Testimonios/politicas/Renovaci%C3%B3n%20RTE%202026%20Fundaci%C3%B3n%20TCS.pdf',
-    active: true,
-    clickHere: true
-  },
-  {
-    label: t('nosotros.financialStatements'),
-    url: '/images/Testimonios/politicas/ESTADOS%20FINANCIEROS%20FUNDACION%20TCS%20A%C3%91O%20FISCAL%202025%20(3)%20(2).pdf',
-    active: true
-  },
-  {
-    label: t('nosotros.webCertificate'),
-    url: '/images/Testimonios/politicas/Certificaci%C3%B3n%20Requisitos%20Registro%20Web%202026%20(2)%20(1)%20-%20signed%20(1).pdf',
-    active: true
-  },
-  {
-    label: t('nosotros.legalRepCertificate'),
-    url: '/images/Testimonios/politicas/Certificado_Representante_Legal_Antecedentes_Judiciales_2025_Fundaci%C3%B3n.%20(1).pdf',
-    active: true
-  },
-  {
-    label: t('nosotros.assemblyMinutes'),
-    url: '/images/Testimonios/politicas/1.%20Extracto%20de%20Acta%20No.%2098%20(1)%20(1).pdf',
-    active: true
-  },
-  {
-    label: t('nosotros.boardAndManagement'),
-    url: '/images/Testimonios/politicas/Certificaci%C3%B3n%20Cargos%20Directivos%20y%20Gerenciales%202025.docx%20%20(2)%20(2)%20(1).pdf',
-    active: true
-  },
 ]
 
 const historicReports = [
@@ -171,7 +126,6 @@ function AlianzasCarrusel() {
 function Nosotros() {
   const { language, t } = useLanguage()
   const [current, setCurrent] = useState(0)
-  const mainDocs = getMainDocs(t)
 
   const img = (path) => {
     if (language === 'en') {
@@ -563,62 +517,6 @@ function Nosotros() {
                   <ExternalLink className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-opacity" />
                 </a>
               ))}
-            </div>
-            {/* ── Directivos y Gerenciales ── */}
-            <div className="mb-14 mt-14">
-              <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: '#004990' }}>
-                <span className="w-1 h-6 rounded-full inline-block" style={{ backgroundColor: '#92c83e' }} />
-                {t('nosotros.directivos')}
-              </h3>
-
-              <p className="text-sm leading-relaxed mb-6 text-gray-600">
-                {t('nosotros.directivosDesc')}
-              </p>
-
-              <div className="grid sm:grid-cols-2 gap-4">
-                {mainDocs.map((doc, i) => {
-                  if (doc.active && doc.url) {
-                    return (
-                      <a
-                        key={i}
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-3 p-4 rounded-xl border-2 font-semibold transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 group"
-                        style={{ borderColor: '#004990', color: '#004990', backgroundColor: '#f0f6ff' }}
-                      >
-                        <FileText className="w-5 h-5 shrink-0" style={{ color: '#92c83e' }} />
-                        <span className="flex-1 text-sm leading-snug">{doc.label}</span>
-                        <ExternalLink className="w-4 h-4 opacity-50 group-hover:opacity-100 shrink-0 transition-opacity" />
-                      </a>
-                    )
-                  }
-                  if (doc.active && !doc.url) {
-                    return (
-                      <div
-                        key={i}
-                        className="flex items-center gap-3 p-4 rounded-xl border-2 font-semibold"
-                        style={{ borderColor: '#004990', color: '#004990', backgroundColor: '#f0f6ff', opacity: 0.55 }}
-                      >
-                        <FileText className="w-5 h-5 shrink-0" style={{ color: '#92c83e' }} />
-                        <span className="flex-1 text-sm leading-snug">{doc.label}</span>
-                        <span className="text-xs font-normal text-gray-400 shrink-0">{t('nosotros.comingSoon')}</span>
-                      </div>
-                    )
-                  }
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 p-4 rounded-xl border border-dashed"
-                      style={{ borderColor: '#d1d5db', color: '#9ca3af', backgroundColor: '#f9fafb' }}
-                    >
-                      <Clock className="w-5 h-5 shrink-0 opacity-50" />
-                      <span className="flex-1 text-sm leading-snug">{doc.label}</span>
-                      <span className="text-xs text-gray-400 shrink-0">{t('nosotros.comingSoon')}</span>
-                    </div>
-                  )
-                })}
-              </div>
             </div>
           </div>
         </div>

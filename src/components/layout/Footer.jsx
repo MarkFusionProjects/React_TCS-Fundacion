@@ -63,7 +63,7 @@ function Footer() {
                 <li><Link to="/vinculate#donaciones-especie" className="hover:text-white transition-colors">{t('footer.inKindDonations')}</Link></li>
                 <li><Link to="/vinculate#servicio-social" className="hover:text-white transition-colors">{t('footer.socialService')}</Link></li>
                 <li><Link to="/vinculate#aliados-comerciales" className="hover:text-white transition-colors">{t('footer.commercialAllies')}</Link></li>
-                <li><Link to="/vinculate#marketplace" className="hover:text-white transition-colors">{t('footer.marketplace')}</Link></li>
+                <li><Link to="/marketplace" className="hover:text-white transition-colors">{t('footer.marketplace')}</Link></li>
               </ul>
             </div>
 

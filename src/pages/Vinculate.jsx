@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLanguage } from '../translations/LanguageContext'
 
 function Vinculate() {
@@ -64,8 +64,8 @@ function Vinculate() {
       color: '#014991',
       bg: '#f3f4f6',
       rawBanner: true,
-      buttonLabel: t('vinculate.comingSoon'),
-      comingSoonButton: true,
+      buttonLabel: t('vinculate.viewDirectory'),
+      buttonTo: '/marketplace',
       buttonColor: '#EC008C',
       buttonLeft: '32%',
     },
@@ -197,6 +197,24 @@ function Vinculate() {
                       alt={s.title}
                       className="w-full h-auto"
                     />
+
+                    {s.buttonLabel && s.buttonTo && (
+                      <Link
+                        to={s.buttonTo}
+                        className="absolute text-white font-bold rounded-full shadow-xl hover:shadow-2xl hover:scale-105 active:scale-100 transition-all duration-300 whitespace-nowrap"
+                        style={{
+                          backgroundColor: s.buttonColor || s.color,
+                          fontFamily: "'Poppins', sans-serif",
+                          bottom: s.buttonBottom || '7%',
+                          left: s.buttonLeft || '50%',
+                          transform: 'translateX(-50%)',
+                          padding: 'clamp(0.35rem, 0.85vw, 0.7rem) clamp(0.85rem, 2vw, 1.7rem)',
+                          fontSize: 'clamp(0.68rem, 1.2vw, 1rem)',
+                        }}
+                      >
+                        {s.buttonLabel}
+                      </Link>
+                    )}
 
                     {s.buttonLabel && s.buttonUrl && (
                       <a

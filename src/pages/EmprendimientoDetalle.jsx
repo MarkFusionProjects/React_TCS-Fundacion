@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ChevronLeft, ChevronRight, Instagram, Mail, Globe, MessageCircle, Store, User, Loader2 } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, AtSign, Mail, Globe, MessageCircle, Store, User, Loader2, MapPin, Truck, BadgePercent, BookOpen, Package } from 'lucide-react'
 import { useLanguage } from '../translations/LanguageContext'
 import { CATEGORIAS } from '../data/emprendimientos'
 import { useEmprendimientos } from '../hooks/useEmprendimientos'
@@ -13,9 +13,9 @@ function EmprendimientoDetalle() {
   const { items: EMPRENDIMIENTOS, loading } = useEmprendimientos()
 
   const item = EMPRENDIMIENTOS.find((e) => e.id === id)
-  const cat = item && CATEGORIAS.find((c) => c.id === item.categoria)
+  const cats = item ? (item.categorias || []).map((cid) => CATEGORIAS.find((c) => c.id === cid)).filter(Boolean) : []
   const imagenes = item?.imagenes || []
-  const color = cat?.color || '#004990'
+  const color = cats[0]?.color || '#004990'
 
   useEffect(() => {
     setIsVisible(true)
@@ -59,12 +59,12 @@ function EmprendimientoDetalle() {
   }
 
   const contactos = [
-    item.instagram && {
-      key: 'instagram',
-      icon: Instagram,
+    item.redSocial && {
+      key: 'redSocial',
+      icon: AtSign,
       label: 'Instagram',
-      text: `@${item.instagram}`,
-      href: `https://instagram.com/${item.instagram}`,
+      text: `@${item.redSocial}`,
+      href: `https://instagram.com/${item.redSocial}`,
     },
     item.whatsapp && {
       key: 'whatsapp',
@@ -98,7 +98,7 @@ function EmprendimientoDetalle() {
       >
         {/* Volver */}
         <Link
-          to={`/marketplace?categoria=${item.categoria}`}
+          to={cats[0] ? `/marketplace?categoria=${cats[0].id}` : '/marketplace'}
           className="inline-flex items-center gap-2 font-semibold mb-6 hover:gap-3 transition-all duration-300"
           style={{ color: '#004990' }}
         >
@@ -109,12 +109,18 @@ function EmprendimientoDetalle() {
         <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10">
           {/* Título con subrayado de color */}
           <div className="mb-8">
-            <span
-              className="inline-block text-white text-xs font-bold px-3 py-1 rounded-full mb-3"
-              style={{ backgroundColor: color }}
-            >
-              {t(`marketplace.categories.${item.categoria}`)}
-            </span>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {cats.map((c) => (
+                <Link
+                  key={c.id}
+                  to={`/marketplace?categoria=${c.id}`}
+                  className="inline-block text-white text-xs font-bold px-3 py-1 rounded-full hover:scale-105 transition-transform"
+                  style={{ backgroundColor: c.color }}
+                >
+                  {c.id === 'otro' && item.categoriaOtro ? item.categoriaOtro : t(`marketplace.categories.${c.id}`)}
+                </Link>
+              ))}
+            </div>
             <h1 className="text-3xl md:text-4xl font-bold" style={{ color }}>
               {item.nombre}
             </h1>
@@ -133,7 +139,7 @@ function EmprendimientoDetalle() {
                       key={src}
                       src={src}
                       alt={`${item.nombre} ${i + 1}`}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                      className={`absolute inset-0 w-full h-full object-cover bg-white transition-opacity duration-500 ${
                         i === slide ? 'opacity-100' : 'opacity-0'
                       }`}
                     />
@@ -185,9 +191,54 @@ function EmprendimientoDetalle() {
                 {item.nombre} – {item.dueno}
               </p>
 
-              <p className="text-gray-700 leading-relaxed text-justify mb-6 whitespace-pre-line">
-                {item.descripcion}
-              </p>
+              {item.historia && (
+                <div className="mb-5">
+                  <h2 className="font-bold mb-1 flex items-center gap-2" style={{ color: '#004990' }}>
+                    <BookOpen className="w-4 h-4" style={{ color }} /> {t('marketplace.history')}
+                  </h2>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{item.historia}</p>
+                </div>
+              )}
+
+              <div className="mb-5">
+                <h2 className="font-bold mb-1 flex items-center gap-2" style={{ color: '#004990' }}>
+                  <Package className="w-4 h-4" style={{ color }} /> {t('marketplace.products')}
+                </h2>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line">{item.descripcion}</p>
+              </div>
+
+              {(item.puntoFisico || item.envios) && (
+                <div className="grid sm:grid-cols-2 gap-3 mb-5">
+                  {item.puntoFisico && (
+                    <div className="bg-gray-50 rounded-xl p-3 flex items-start gap-2">
+                      <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color }} />
+                      <div>
+                        <p className="text-xs text-gray-500 font-semibold">{t('marketplace.location')}</p>
+                        <p className="text-sm text-gray-800">{item.puntoFisico}</p>
+                      </div>
+                    </div>
+                  )}
+                  {item.envios && (
+                    <div className="bg-gray-50 rounded-xl p-3 flex items-start gap-2">
+                      <Truck className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color }} />
+                      <div>
+                        <p className="text-xs text-gray-500 font-semibold">{t('marketplace.shipping')}</p>
+                        <p className="text-sm text-gray-800">{item.envios}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {item.beneficioTcs && (
+                <div className="rounded-xl p-4 mb-6 flex items-start gap-3 border-2" style={{ borderColor: '#92c83e', backgroundColor: '#92c83e14' }}>
+                  <BadgePercent className="w-6 h-6 flex-shrink-0" style={{ color: '#7ab82f' }} />
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wide" style={{ color: '#7ab82f' }}>{t('marketplace.benefit')}</p>
+                    <p className="text-sm text-gray-800 font-medium">{item.beneficioDescripcion || t('marketplace.form.yes')}</p>
+                  </div>
+                </div>
+              )}
 
               {contactos.length > 0 && (
                 <div>

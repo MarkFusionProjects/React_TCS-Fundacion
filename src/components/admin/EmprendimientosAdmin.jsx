@@ -1,18 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon } from 'lucide-react';
+import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon, MapPin, Truck, BadgePercent } from 'lucide-react';
 import { getEmprendimientos, aprobarEmprendimiento, rechazarEmprendimiento, ESTADOS } from '../../services/emprendimientoService';
 import { clearEmprendimientosCache } from '../../hooks/useEmprendimientos';
 import { CATEGORIAS } from '../../data/emprendimientos';
 
 const CATEGORIA_LABEL = {
-  alimentos: 'Alimentos y Bebidas',
-  moda: 'Moda y Accesorios',
-  hogar: 'Hogar y Decoración',
-  bienestar: 'Salud, Belleza y Bienestar',
-  servicios: 'Educación y Servicios Profesionales',
-  arte: 'Arte, Regalos y Entretenimiento',
-  tecnologia: 'Tecnología y Otros',
+  moda: 'Moda y accesorios',
+  belleza: 'Belleza y bienestar',
+  hogar: 'Hogar y decoración',
+  gastronomia: 'Gastronomía',
+  arte: 'Arte y diseño',
+  tecnologia: 'Tecnología',
+  educacion: 'Educación',
+  salud: 'Salud',
+  mascotas: 'Mascotas',
+  servicios: 'Servicios profesionales',
+  deportes: 'Deportes',
+  infantil: 'Infantil',
+  sostenibilidad: 'Sostenibilidad y manejo ambiental',
+  eventos: 'Producción de eventos',
+  otro: 'Otro',
 };
+
+const RELACION_LABEL = { padre: 'Papá/mamá', egresado: 'Egresado', estudiante: 'Estudiante', staff: 'Staff' };
+
+const catLabel = (item, id) => (id === 'otro' && item.categoriaOtro ? `Otro: ${item.categoriaOtro}` : CATEGORIA_LABEL[id] || id);
 
 const estadoBadge = (estado) => {
   const map = {
@@ -88,7 +100,7 @@ const EmprendimientosAdmin = () => {
     const q = search.trim().toLowerCase();
     return items
       .filter((i) => !estado || i.estado === estado)
-      .filter((i) => !q || [i.nombre, i.dueno, i.email, i.whatsapp, CATEGORIA_LABEL[i.categoria]].join(' ').toLowerCase().includes(q));
+      .filter((i) => !q || [i.nombre, i.dueno, i.email, i.whatsapp, ...(i.categorias || []).map((c) => catLabel(i, c))].join(' ').toLowerCase().includes(q));
   }, [items, estado, search]);
 
   const closeModal = () => {
@@ -139,6 +151,7 @@ const EmprendimientosAdmin = () => {
   };
 
   const catColor = (id) => CATEGORIAS.find((c) => c.id === id)?.color || '#004990';
+  const firstCat = (item) => item.categorias?.[0];
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -261,8 +274,8 @@ const EmprendimientosAdmin = () => {
                         {item.imagenes?.[0] ? (
                           <img src={item.imagenes[0]} alt="" className="h-10 w-10 rounded-lg object-cover flex-shrink-0" />
                         ) : (
-                          <div className="h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${catColor(item.categoria)}22` }}>
-                            <Store className="h-5 w-5" style={{ color: catColor(item.categoria) }} />
+                          <div className="h-10 w-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${catColor(firstCat(item))}22` }}>
+                            <Store className="h-5 w-5" style={{ color: catColor(firstCat(item)) }} />
                           </div>
                         )}
                         <span className="font-semibold text-gray-900">{item.nombre}</span>
@@ -270,9 +283,13 @@ const EmprendimientosAdmin = () => {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">{item.dueno}</td>
                     <td className="px-6 py-4">
-                      <span className="text-xs font-semibold text-white px-2 py-1 rounded-full" style={{ backgroundColor: catColor(item.categoria) }}>
-                        {CATEGORIA_LABEL[item.categoria] || item.categoria}
-                      </span>
+                      <div className="flex flex-wrap gap-1 max-w-[220px]">
+                        {(item.categorias || []).map((c) => (
+                          <span key={c} className="text-xs font-semibold text-white px-2 py-1 rounded-full whitespace-nowrap" style={{ backgroundColor: catColor(c) }}>
+                            {catLabel(item, c)}
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       <div>{item.email}</div>
@@ -314,7 +331,7 @@ const EmprendimientosAdmin = () => {
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-xl flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold">{selected.nombre}</h2>
-                <p className="text-blue-100 text-sm mt-1">{CATEGORIA_LABEL[selected.categoria] || selected.categoria}</p>
+                <p className="text-blue-100 text-sm mt-1">{(selected.categorias || []).map((c) => catLabel(selected, c)).join(' · ')}</p>
               </div>
               {estadoBadge(selected.estado)}
             </div>
@@ -324,8 +341,9 @@ const EmprendimientosAdmin = () => {
               {selected.imagenes?.length > 0 ? (
                 <div className="grid grid-cols-3 gap-3">
                   {selected.imagenes.map((src, i) => (
-                    <a key={src + i} href={src} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-lg overflow-hidden shadow">
-                      <img src={src} alt={`${selected.nombre} ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform" />
+                    <a key={src + i} href={src} target="_blank" rel="noopener noreferrer" className="block aspect-square rounded-lg overflow-hidden shadow bg-white relative">
+                      <img src={src} alt={`${selected.nombre} ${i + 1}`} className={`w-full h-full ${i === 0 ? 'object-contain' : 'object-cover'} hover:scale-105 transition-transform`} />
+                      {i === 0 && <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">Logo</span>}
                     </a>
                   ))}
                 </div>
@@ -337,8 +355,14 @@ const EmprendimientosAdmin = () => {
                 <div className="flex items-start gap-3">
                   <User className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold">Padre / Madre</p>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">Representante de marca</p>
                     <p className="text-gray-900 font-medium">{selected.dueno}</p>
+                    {selected.relacionTcs?.length > 0 && (
+                      <p className="text-xs text-gray-500">{selected.relacionTcs.map((r) => RELACION_LABEL[r] || r).join(', ')}</p>
+                    )}
+                    {selected.telefonoPersonal && (
+                      <p className="text-xs text-gray-500">Tel. personal: +{selected.telefonoPersonal}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
@@ -351,28 +375,53 @@ const EmprendimientosAdmin = () => {
                 <div className="flex items-start gap-3">
                   <Mail className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold">Correo</p>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">Correo de la marca</p>
                     <a href={`mailto:${selected.email}`} className="text-blue-600 font-medium break-all">{selected.email}</a>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Phone className="h-5 w-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-xs text-gray-500 uppercase font-semibold">WhatsApp</p>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">Contacto de la marca</p>
                     {selected.whatsapp ? (
                       <a href={`https://wa.me/${selected.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-medium">+{selected.whatsapp}</a>
                     ) : <p className="text-gray-400">N/A</p>}
                   </div>
                 </div>
-                {selected.instagram && (
+                {selected.redSocial && (
                   <div className="flex items-start gap-3">
                     <Instagram className="h-5 w-5 text-gray-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 uppercase font-semibold">Instagram</p>
-                      <a href={`https://instagram.com/${selected.instagram}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-medium">@{selected.instagram}</a>
+                      <p className="text-xs text-gray-500 uppercase font-semibold">Red social principal</p>
+                      <a href={`https://instagram.com/${selected.redSocial}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-medium">@{selected.redSocial}</a>
                     </div>
                   </div>
                 )}
+                {selected.puntoFisico && (
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase font-semibold">Punto físico</p>
+                      <p className="text-gray-900 font-medium">{selected.puntoFisico}</p>
+                    </div>
+                  </div>
+                )}
+                {selected.envios && (
+                  <div className="flex items-start gap-3">
+                    <Truck className="h-5 w-5 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase font-semibold">Envíos</p>
+                      <p className="text-gray-900 font-medium">{selected.envios}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-start gap-3">
+                  <BadgePercent className="h-5 w-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase font-semibold">Beneficio comunidad TCS</p>
+                    <p className="text-gray-900 font-medium">{selected.beneficioTcs ? (selected.beneficioDescripcion || 'Sí') : 'No'}</p>
+                  </div>
+                </div>
                 {selected.web && (
                   <div className="flex items-start gap-3">
                     <Globe className="h-5 w-5 text-gray-400 mt-0.5" />
@@ -384,8 +433,15 @@ const EmprendimientosAdmin = () => {
                 )}
               </div>
 
+              {selected.historia && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Historia de la marca</p>
+                  <p className="text-gray-800 leading-relaxed whitespace-pre-line">{selected.historia}</p>
+                </div>
+              )}
+
               <div>
-                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Descripción</p>
+                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">Productos o servicios</p>
                 <p className="text-gray-800 leading-relaxed whitespace-pre-line">{selected.descripcion}</p>
               </div>
 

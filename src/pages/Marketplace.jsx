@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Search, Store, ArrowRight, LayoutGrid, PlusCircle, X, ArrowDownAZ, ArrowUpZA, Loader2 } from 'lucide-react'
+import { Search, Store, ArrowRight, LayoutGrid, PlusCircle, X, ArrowDownAZ, Loader2 } from 'lucide-react'
 import { useLanguage } from '../translations/LanguageContext'
 import { CATEGORIAS } from '../data/emprendimientos'
 import { useEmprendimientos } from '../hooks/useEmprendimientos'
-import RegistroEmprendimientoModal from '../components/sections/RegistroEmprendimientoModal'
 
 // Normaliza texto para búsqueda (minúsculas y sin tildes)
 const normalize = (s = '') =>
@@ -14,7 +13,6 @@ function Marketplace() {
   const { t } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const [keyword, setKeyword] = useState(searchParams.get('q') || '')
-  const [isFormOpen, setIsFormOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [sort, setSort] = useState('') // '' | 'asc' | 'desc'
   const listRef = useRef(null)
@@ -46,12 +44,13 @@ function Marketplace() {
   const clearFilters = () => {
     setKeyword('')
     setCategoria('')
+    setSort('')
   }
 
   const countByCategory = useMemo(() => {
     const counts = {}
     EMPRENDIMIENTOS.forEach((e) => {
-      counts[e.categoria] = (counts[e.categoria] || 0) + 1
+      ;(e.categorias || []).forEach((c) => { counts[c] = (counts[c] || 0) + 1 })
     })
     return counts
   }, [EMPRENDIMIENTOS])
@@ -59,10 +58,10 @@ function Marketplace() {
   const filtered = useMemo(() => {
     const q = normalize(keyword.trim())
     const list = EMPRENDIMIENTOS.filter((e) => {
-      if (categoria && e.categoria !== categoria) return false
+      if (categoria && !(e.categorias || []).includes(categoria)) return false
       if (!q) return true
       const haystack = normalize(
-        [e.nombre, e.dueno, e.descripcion, t(`marketplace.categories.${e.categoria}`), ...(e.etiquetas || [])].join(' ')
+        [e.nombre, e.dueno, e.descripcion, e.historia, e.categoriaOtro, ...(e.categorias || []).map((c) => t(`marketplace.categories.${c}`)), ...(e.etiquetas || [])].join(' ')
       )
       return haystack.includes(q)
     })
@@ -72,13 +71,9 @@ function Marketplace() {
     return list
   }, [EMPRENDIMIENTOS, keyword, categoria, sort, t])
 
-  // Ciclo del botón de orden: original → A–Z → Z–A → original
-  const cycleSort = () => setSort((s) => (s === '' ? 'asc' : s === 'asc' ? 'desc' : ''))
-  const SortIcon = sort === 'desc' ? ArrowUpZA : ArrowDownAZ
-  const sortLabel = sort === '' ? t('marketplace.sortAZ') : sort === 'asc' ? t('marketplace.sortZA') : t('marketplace.sortReset')
 
   const catInfo = (id) => CATEGORIAS.find((c) => c.id === id)
-  const hasFilters = Boolean(keyword || categoria)
+  const hasFilters = Boolean(keyword || categoria || sort)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-16 relative overflow-hidden">
@@ -108,14 +103,14 @@ function Marketplace() {
 
           {/* ─── CTA REGISTRO ─── */}
           <div className="mt-8 flex flex-col items-center gap-3">
-            <button
-              onClick={() => setIsFormOpen(true)}
+            <Link
+              to="/marketplace/registro"
               className="inline-flex items-center gap-2 text-white font-bold py-3.5 px-8 rounded-full shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-0.5 active:scale-100 transition-all duration-300 text-base md:text-lg"
               style={{ backgroundColor: '#92c83e' }}
             >
               <PlusCircle className="w-5 h-5" />
               {t('marketplace.registerButton')}
-            </button>
+            </Link>
             <p className="text-sm text-gray-500 max-w-md">{t('marketplace.registerHint')}</p>
           </div>
         </div>
@@ -126,7 +121,7 @@ function Marketplace() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <div className="grid md:grid-cols-[1fr_1.4fr_auto] gap-3 items-center">
+          <div className="grid md:grid-cols-[1fr_1.4fr_1fr_auto] gap-3 items-center">
             <div className="relative">
               <LayoutGrid className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <select
@@ -154,6 +149,21 @@ function Marketplace() {
               />
             </div>
 
+            {/* Orden alfabético */}
+            <div className="relative">
+              <ArrowDownAZ className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                aria-label={t('marketplace.sortLabel')}
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-columbus-blue focus:border-transparent outline-none bg-white text-gray-700"
+              >
+                <option value="">{t('marketplace.sortLabel')}</option>
+                <option value="asc">{t('marketplace.sortAZ')}</option>
+                <option value="desc">{t('marketplace.sortZA')}</option>
+              </select>
+            </div>
+
             <button
               onClick={clearFilters}
               disabled={!hasFilters}
@@ -170,7 +180,7 @@ function Marketplace() {
         <h2 className="text-xl md:text-2xl font-bold mb-5" style={{ color: '#004990' }}>
           {t('marketplace.categoriesTitle')}
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-14">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-14">
           {CATEGORIAS.map((c, i) => {
             const Icon = c.icon
             const active = categoria === c.id
@@ -179,22 +189,22 @@ function Marketplace() {
               <button
                 key={c.id}
                 onClick={() => handleCategoryClick(c.id)}
-                className={`group relative bg-white rounded-2xl shadow-md hover:shadow-2xl p-5 text-left transition-all duration-300 hover:-translate-y-1 border-2 ${
+                className={`group relative bg-white rounded-2xl shadow-md hover:shadow-2xl p-4 text-left transition-all duration-300 hover:-translate-y-1 border-2 ${
                   active ? 'ring-4 ring-offset-2' : ''
                 } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
                 style={{
                   borderColor: active ? c.color : 'transparent',
                   '--tw-ring-color': `${c.color}55`,
-                  transitionDelay: `${150 + i * 60}ms`,
+                  transitionDelay: `${150 + i * 40}ms`,
                 }}
               >
                 <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 shadow-md transition-transform duration-300 group-hover:scale-110"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 shadow-md transition-transform duration-300 group-hover:scale-110"
                   style={{ backgroundColor: c.color }}
                 >
-                  <Icon className="w-6 h-6 text-white" />
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
-                <p className="font-bold text-sm md:text-base leading-snug" style={{ color: '#004990' }}>
+                <p className="font-bold text-sm leading-snug" style={{ color: '#004990' }}>
                   {t(`marketplace.categories.${c.id}`)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
@@ -211,23 +221,9 @@ function Marketplace() {
             <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#004990' }}>
               {categoria ? t(`marketplace.categories.${categoria}`) : t('marketplace.allCategories')}
             </h2>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                {filtered.length} {filtered.length === 1 ? t('marketplace.result') : t('marketplace.results')}
-              </span>
-              {/* Botón de orden alfabético */}
-              <button
-                onClick={cycleSort}
-                className={`inline-flex items-center gap-2 font-semibold text-sm py-2 px-4 rounded-full border-2 shadow-sm transition-all duration-300 hover:scale-105 ${
-                  sort ? 'text-white' : 'bg-white'
-                }`}
-                style={{ borderColor: '#004990', color: sort ? '#fff' : '#004990', backgroundColor: sort ? '#004990' : undefined }}
-                title={sortLabel}
-              >
-                <SortIcon className="w-4 h-4" />
-                {sortLabel}
-              </button>
-            </div>
+            <span className="text-sm text-gray-500">
+              {filtered.length} {filtered.length === 1 ? t('marketplace.result') : t('marketplace.results')}
+            </span>
           </div>
 
           {loading ? (
@@ -250,7 +246,8 @@ function Marketplace() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((e) => {
-                const cat = catInfo(e.categoria)
+                const mainCat = categoria && e.categorias?.includes(categoria) ? categoria : e.categorias?.[0]
+                const cat = catInfo(mainCat)
                 return (
                   <Link
                     key={e.id}
@@ -263,19 +260,22 @@ function Marketplace() {
                           src={e.imagenes[0]}
                           alt={e.nombre}
                           loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 bg-white"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: `${cat?.color}22` }}>
                           <Store className="w-14 h-14" style={{ color: cat?.color }} />
                         </div>
                       )}
-                      <span
-                        className="absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
-                        style={{ backgroundColor: cat?.color || '#004990' }}
-                      >
-                        {t(`marketplace.categories.${e.categoria}`)}
-                      </span>
+                      {mainCat && (
+                        <span
+                          className="absolute top-3 left-3 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md"
+                          style={{ backgroundColor: cat?.color || '#004990' }}
+                        >
+                          {t(`marketplace.categories.${mainCat}`)}
+                          {e.categorias.length > 1 && ` +${e.categorias.length - 1}`}
+                        </span>
+                      )}
                     </div>
 
                     <div className="p-5 flex flex-col flex-1">
@@ -300,7 +300,6 @@ function Marketplace() {
         </div>
       </div>
 
-      <RegistroEmprendimientoModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </div>
   )
 }

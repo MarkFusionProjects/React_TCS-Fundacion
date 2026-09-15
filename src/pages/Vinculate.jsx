@@ -73,7 +73,7 @@ function Vinculate() {
       id: 'directorio-comercial',
       title: t('vinculate.commercialDirectory'),
       color: '#92c83e',
-      navigateTo: '/marketplace',
+      navigateTo: '/marketplace/registro',
     },
   ]
 

@@ -17,16 +17,39 @@ import api from './api'
  *   GET    /emprendimientos                 Listado completo (panel admin). Acepta
  *                                           ?estado=pendiente|aprobado|rechazado
  *
- *   PATCH  /emprendimientos/:id/aprobar     Aprueba. El backend envía correo al padre
- *                                           avisando que ya está publicado.
+ *   PATCH  /emprendimientos/:id/aprobar     Aprueba. El backend envía correo al
+ *                                           representante avisando que ya está publicado.
  *   PATCH  /emprendimientos/:id/rechazar    Rechaza. Body: { motivo }. El backend envía
- *                                           correo al padre con el motivo.
+ *                                           correo al representante con el motivo.
  *
- * Forma esperada de cada emprendimiento en las respuestas:
+ * Campos del registro (POST, multipart/form-data) — replican el formulario:
+ *   acepta_datos            "true"     (requerido) Autorización de uso de datos e imágenes
+ *   nombre_representante    string     (requerido) Nombre completo de representante de marca
+ *   telefono_personal       string     (requerido) Número de contacto personal (solo dígitos)
+ *   relacion_tcs[]          string     (requerido, 1+) padre | egresado | estudiante | staff
+ *   nombre_emprendimiento   string     (requerido) Nombre del emprendimiento o empresa
+ *   telefono_marca          string     (requerido) Número de contacto de la marca (solo dígitos)
+ *   email                   string     (requerido) Correo electrónico de la marca
+ *   categorias[]            string     (requerido, 1+) ver CATEGORIAS en src/data/emprendimientos.js
+ *   categoria_otro          string     (opcional)  texto libre cuando categorias incluye "otro"
+ *   historia                string     (requerido) Pequeña historia de la marca
+ *   descripcion             string     (requerido) Describe tus productos o servicios
+ *   red_social              string     (requerido) Usuario de la red social principal (sin @)
+ *   web                     string     (requerido) Link de página web, otra red o portafolio
+ *   punto_fisico            string     (opcional)  Ubicación del punto físico
+ *   envios                  string     (opcional)  Ciudades o países a los que envía
+ *   logo                    File       (requerido) Logo o imagen representativa (máx 10 MB)
+ *   fotos[]                 File       (opcional)  0 a 3 fotos de productos (máx 5 MB c/u)
+ *   beneficio_tcs           "si"|"no"  (requerido) Beneficio para la comunidad TCS
+ *   beneficio_descripcion   string     (opcional)  Detalle del beneficio
+ *
+ * Forma esperada de cada emprendimiento en las respuestas (GET):
  *   {
- *     id, nombre_emprendimiento, nombre_padre, email, whatsapp, categoria,
- *     descripcion, instagram, web,
- *     fotos: ["https://.../foto1.jpg", ...],
+ *     id, nombre_emprendimiento, nombre_representante, telefono_personal, relacion_tcs: [],
+ *     telefono_marca, email, categorias: [], categoria_otro, historia, descripcion,
+ *     red_social, web, punto_fisico, envios,
+ *     logo: "https://.../logo.png", fotos: ["https://.../foto1.jpg", ...],
+ *     beneficio_tcs: "si" | "no", beneficio_descripcion,
  *     estado: "pendiente" | "aprobado" | "rechazado",
  *     motivo_rechazo, createdAt, updatedAt
  *   }
@@ -42,49 +65,56 @@ export const ESTADOS = {
 // Desenvuelve { success, data } si viene así
 const unwrap = (res) => (res?.data?.data !== undefined ? res.data.data : res?.data)
 
+const toArray = (v) => (Array.isArray(v) ? v : v ? String(v).split(',').map((x) => x.trim()).filter(Boolean) : [])
+
 /**
  * Convierte el objeto del backend al formato que usan las páginas del directorio.
  * Devuelve la misma forma que los objetos de src/data/emprendimientos.js
  */
-export const normalizeEmprendimiento = (raw) => ({
-  id: String(raw.id ?? raw._id ?? raw.slug ?? ''),
-  nombre: raw.nombre_emprendimiento ?? raw.nombre ?? '',
-  dueno: raw.nombre_padre ?? raw.dueno ?? '',
-  categoria: raw.categoria ?? '',
-  descripcion: raw.descripcion ?? '',
-  imagenes: Array.isArray(raw.fotos) ? raw.fotos : Array.isArray(raw.imagenes) ? raw.imagenes : [],
-  instagram: raw.instagram || undefined,
-  whatsapp: raw.whatsapp || undefined,
-  email: raw.email || undefined,
-  web: raw.web || undefined,
-  etiquetas: raw.etiquetas || [],
-  estado: raw.estado ?? ESTADOS.PENDIENTE,
-  motivoRechazo: raw.motivo_rechazo || undefined,
-  createdAt: raw.createdAt ?? raw.created_at ?? raw.fecha ?? null,
-})
+export const normalizeEmprendimiento = (raw) => {
+  const categorias = toArray(raw.categorias ?? raw.categoria)
+  const logo = raw.logo || null
+  const fotos = toArray(raw.fotos ?? raw.imagenes)
+  return {
+    id: String(raw.id ?? raw._id ?? raw.slug ?? ''),
+    nombre: raw.nombre_emprendimiento ?? raw.nombre ?? '',
+    dueno: raw.nombre_representante ?? raw.nombre_padre ?? raw.dueno ?? '',
+    telefonoPersonal: raw.telefono_personal || undefined,
+    relacionTcs: toArray(raw.relacion_tcs),
+    categorias,
+    categoriaOtro: raw.categoria_otro || undefined,
+    historia: raw.historia ?? '',
+    descripcion: raw.descripcion ?? '',
+    imagenes: [...(logo ? [logo] : []), ...fotos],
+    redSocial: raw.red_social ?? raw.instagram ?? raw.redSocial ?? undefined,
+    web: raw.web || undefined,
+    whatsapp: raw.telefono_marca ?? raw.whatsapp ?? undefined,
+    email: raw.email || undefined,
+    puntoFisico: raw.punto_fisico ?? raw.puntoFisico ?? undefined,
+    envios: raw.envios || undefined,
+    beneficioTcs: raw.beneficio_tcs === true || raw.beneficio_tcs === 'si' || raw.beneficioTcs === true,
+    beneficioDescripcion: raw.beneficio_descripcion ?? raw.beneficioDescripcion ?? undefined,
+    etiquetas: toArray(raw.etiquetas),
+    estado: raw.estado ?? ESTADOS.PENDIENTE,
+    motivoRechazo: raw.motivo_rechazo || undefined,
+    createdAt: raw.createdAt ?? raw.created_at ?? raw.fecha ?? null,
+  }
+}
 
 /**
  * Registrar un emprendimiento (formulario público).
- *
- * Campos enviados (multipart/form-data):
- *   nombre_emprendimiento  string  (requerido)
- *   nombre_padre           string  (requerido)
- *   email                  string  (requerido)
- *   whatsapp               string  (requerido, solo dígitos con indicativo)
- *   categoria              string  (requerido: alimentos | moda | hogar | bienestar | servicios | arte | tecnologia)
- *   descripcion            string  (requerido)
- *   instagram              string  (opcional, usuario sin @)
- *   web                    string  (opcional, URL)
- *   acepta_datos           "true"  (requerido)
- *   fotos[]                File    (0 a 3 imágenes, máx 5 MB c/u)
+ * @param {Object} data  - Campos del formulario (los arreglos se envían como campo[])
+ * @param {File|null} logo
+ * @param {File[]} fotos
  */
-export const createEmprendimiento = async (data, fotos = []) => {
+export const createEmprendimiento = async (data, logo = null, fotos = []) => {
   const formData = new FormData()
   Object.entries(data).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      formData.append(key, value)
-    }
+    if (value === undefined || value === null || value === '') return
+    if (Array.isArray(value)) value.forEach((v) => formData.append(`${key}[]`, v))
+    else formData.append(key, value)
   })
+  if (logo) formData.append('logo', logo)
   fotos.forEach((file) => formData.append('fotos[]', file))
 
   try {
@@ -117,7 +147,7 @@ export const getEmprendimientos = async (params = {}) => {
 /** Listado público: solo aprobados */
 export const getEmprendimientosAprobados = () => getEmprendimientos({ estado: ESTADOS.APROBADO })
 
-/** Aprobar (panel admin). El backend notifica por correo al padre. */
+/** Aprobar (panel admin). El backend notifica por correo al representante. */
 export const aprobarEmprendimiento = async (id) => {
   try {
     const response = await api.patch(`/emprendimientos/${id}/aprobar`)
@@ -128,7 +158,7 @@ export const aprobarEmprendimiento = async (id) => {
   }
 }
 
-/** Rechazar (panel admin). El backend notifica por correo al padre con el motivo. */
+/** Rechazar (panel admin). El backend notifica por correo al representante con el motivo. */
 export const rechazarEmprendimiento = async (id, motivo = '') => {
   try {
     const response = await api.patch(`/emprendimientos/${id}/rechazar`, { motivo })

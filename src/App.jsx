@@ -10,6 +10,7 @@ import Nosotros from './pages/Nosotros'
 import Vinculate from './pages/Vinculate'
 import Marketplace from './pages/Marketplace'
 import EmprendimientoDetalle from './pages/EmprendimientoDetalle'
+import RegistroEmprendimiento from './pages/RegistroEmprendimiento'
 import AdminPanel from './pages/AdminPanel'
 
 // Hace scroll al elemento con el id del hash cada vez que cambia la ruta/hash.
@@ -58,6 +59,7 @@ function App() {
                     <Route path="/nosotros" element={<Nosotros />} />
                     <Route path="/vinculate" element={<Vinculate />} />
                     <Route path="/marketplace" element={<Marketplace />} />
+                    <Route path="/marketplace/registro" element={<RegistroEmprendimiento />} />
                     <Route path="/marketplace/:id" element={<EmprendimientoDetalle />} />
                     <Route path="/donar" element={<Donar />} />
                     <Route path="/contacto" element={<Contacto />} />

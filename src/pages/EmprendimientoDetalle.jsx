@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, ChevronLeft, ChevronRight, Instagram, Mail, Globe, MessageCircle, Store, User } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, Instagram, Mail, Globe, MessageCircle, Store, User, Loader2 } from 'lucide-react'
 import { useLanguage } from '../translations/LanguageContext'
-import { CATEGORIAS, EMPRENDIMIENTOS } from '../data/emprendimientos'
+import { CATEGORIAS } from '../data/emprendimientos'
+import { useEmprendimientos } from '../hooks/useEmprendimientos'
 
 function EmprendimientoDetalle() {
   const { id } = useParams()
   const { t } = useLanguage()
   const [slide, setSlide] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
+  const { items: EMPRENDIMIENTOS, loading } = useEmprendimientos()
 
   const item = EMPRENDIMIENTOS.find((e) => e.id === id)
   const cat = item && CATEGORIAS.find((c) => c.id === item.categoria)
@@ -23,6 +25,18 @@ function EmprendimientoDetalle() {
 
   const prev = () => setSlide((s) => (s - 1 + imagenes.length) % imagenes.length)
   const next = () => setSlide((s) => (s + 1) % imagenes.length)
+
+  // ─── Cargando ───
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-24 px-4">
+        <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-12 text-center text-gray-500">
+          <Loader2 className="w-10 h-10 mx-auto mb-3 animate-spin" style={{ color: '#004990' }} />
+          {t('marketplace.loading')}
+        </div>
+      </div>
+    )
+  }
 
   // ─── No encontrado ───
   if (!item) {

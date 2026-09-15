@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { Search, Store, ArrowRight, LayoutGrid, PlusCircle, X } from 'lucide-react'
+import { Search, Store, ArrowRight, LayoutGrid, PlusCircle, X, ArrowDownAZ, ArrowUpZA, Loader2 } from 'lucide-react'
 import { useLanguage } from '../translations/LanguageContext'
-import { CATEGORIAS, EMPRENDIMIENTOS } from '../data/emprendimientos'
+import { CATEGORIAS } from '../data/emprendimientos'
+import { useEmprendimientos } from '../hooks/useEmprendimientos'
 import RegistroEmprendimientoModal from '../components/sections/RegistroEmprendimientoModal'
 
 // Normaliza texto para búsqueda (minúsculas y sin tildes)
 const normalize = (s = '') =>
-  s.toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  s.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
 function Marketplace() {
   const { t } = useLanguage()
@@ -15,7 +16,9 @@ function Marketplace() {
   const [keyword, setKeyword] = useState(searchParams.get('q') || '')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [sort, setSort] = useState('') // '' | 'asc' | 'desc'
   const listRef = useRef(null)
+  const { items: EMPRENDIMIENTOS, loading } = useEmprendimientos()
 
   // La categoría vive en la URL (?categoria=...) para que se pueda compartir
   const categoria = searchParams.get('categoria') || ''
@@ -51,11 +54,11 @@ function Marketplace() {
       counts[e.categoria] = (counts[e.categoria] || 0) + 1
     })
     return counts
-  }, [])
+  }, [EMPRENDIMIENTOS])
 
   const filtered = useMemo(() => {
     const q = normalize(keyword.trim())
-    return EMPRENDIMIENTOS.filter((e) => {
+    const list = EMPRENDIMIENTOS.filter((e) => {
       if (categoria && e.categoria !== categoria) return false
       if (!q) return true
       const haystack = normalize(
@@ -63,7 +66,16 @@ function Marketplace() {
       )
       return haystack.includes(q)
     })
-  }, [keyword, categoria, t])
+    if (sort) {
+      list.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' }) * (sort === 'asc' ? 1 : -1))
+    }
+    return list
+  }, [EMPRENDIMIENTOS, keyword, categoria, sort, t])
+
+  // Ciclo del botón de orden: original → A–Z → Z–A → original
+  const cycleSort = () => setSort((s) => (s === '' ? 'asc' : s === 'asc' ? 'desc' : ''))
+  const SortIcon = sort === 'desc' ? ArrowUpZA : ArrowDownAZ
+  const sortLabel = sort === '' ? t('marketplace.sortAZ') : sort === 'asc' ? t('marketplace.sortZA') : t('marketplace.sortReset')
 
   const catInfo = (id) => CATEGORIAS.find((c) => c.id === id)
   const hasFilters = Boolean(keyword || categoria)
@@ -199,12 +211,31 @@ function Marketplace() {
             <h2 className="text-xl md:text-2xl font-bold" style={{ color: '#004990' }}>
               {categoria ? t(`marketplace.categories.${categoria}`) : t('marketplace.allCategories')}
             </h2>
-            <span className="text-sm text-gray-500">
-              {filtered.length} {filtered.length === 1 ? t('marketplace.result') : t('marketplace.results')}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-500">
+                {filtered.length} {filtered.length === 1 ? t('marketplace.result') : t('marketplace.results')}
+              </span>
+              {/* Botón de orden alfabético */}
+              <button
+                onClick={cycleSort}
+                className={`inline-flex items-center gap-2 font-semibold text-sm py-2 px-4 rounded-full border-2 shadow-sm transition-all duration-300 hover:scale-105 ${
+                  sort ? 'text-white' : 'bg-white'
+                }`}
+                style={{ borderColor: '#004990', color: sort ? '#fff' : '#004990', backgroundColor: sort ? '#004990' : undefined }}
+                title={sortLabel}
+              >
+                <SortIcon className="w-4 h-4" />
+                {sortLabel}
+              </button>
+            </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="bg-white rounded-2xl shadow-xl p-12 text-center text-gray-500">
+              <Loader2 className="w-10 h-10 mx-auto mb-3 animate-spin" style={{ color: '#004990' }} />
+              {t('marketplace.loading')}
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
               <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p className="text-gray-600 mb-4">{t('marketplace.noResults')}</p>

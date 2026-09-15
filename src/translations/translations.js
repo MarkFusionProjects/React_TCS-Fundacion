@@ -7,6 +7,7 @@ export const translations = {
       home: "Home",
       nosotros: "Who We Are",
       vinculate: "Get Involved",
+      marketplace: "Business directory",
       donate: "Donate",
       contact: "Contact"
     },
@@ -331,7 +332,7 @@ export const translations = {
       socialService: "Student social hours",
       commercialAllies: "Commercial allies",
       marketplace: "Marketplace",
-      viewDirectory: "View directory",
+      commercialDirectory: "Business directory",
       comingSoon: "Coming soon"
     },
 
@@ -348,6 +349,10 @@ export const translations = {
       result: "business",
       noResults: "No businesses match your search.",
       clearFilters: "Clear filters",
+      sortAZ: "Sort A–Z",
+      sortZA: "Sort Z–A",
+      sortReset: "Default order",
+      loading: "Loading businesses...",
       viewDetail: "View details",
       backToDirectory: "Back to directory",
       owner: "Owner",
@@ -473,6 +478,7 @@ export const translations = {
       socialService: "Student social hours",
       commercialAllies: "Commercial allies",
       marketplace: "Marketplace",
+      commercialDirectory: "Business directory",
       policies: "Policies",
       dataPolicy: "Data processing policy",
       privacyNotice: "Privacy notice",
@@ -489,6 +495,7 @@ export const translations = {
       home: "Inicio",
       nosotros: "Quienes somos",
       vinculate: "Vincúlate",
+      marketplace: "Directorio comercial",
       donate: "Donar",
       contact: "Contacto"
     },
@@ -813,7 +820,7 @@ export const translations = {
       socialService: "Horas sociales de estudiantes",
       commercialAllies: "Aliados comerciales",
       marketplace: "Marketplace",
-      viewDirectory: "Ver directorio",
+      commercialDirectory: "Directorio comercial",
       comingSoon: "Próximamente"
     },
 
@@ -830,6 +837,10 @@ export const translations = {
       result: "emprendimiento",
       noResults: "No hay emprendimientos que coincidan con tu búsqueda.",
       clearFilters: "Limpiar filtros",
+      sortAZ: "Ordenar A–Z",
+      sortZA: "Ordenar Z–A",
+      sortReset: "Orden original",
+      loading: "Cargando emprendimientos...",
       viewDetail: "Ver detalle",
       backToDirectory: "Volver al directorio",
       owner: "Emprendedor(a)",
@@ -955,6 +966,7 @@ export const translations = {
       socialService: "Horas sociales de estudiantes",
       commercialAllies: "Aliados comerciales",
       marketplace: "Marketplace",
+      commercialDirectory: "Directorio comercial",
       policies: "Políticas",
       dataPolicy: "Política de tratamiento de datos",
       privacyNotice: "Aviso de privacidad",

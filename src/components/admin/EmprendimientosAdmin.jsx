@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon, MapPin, Truck, BadgePercent } from 'lucide-react';
+import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon, MapPin, Truck, BadgePercent, Pencil } from 'lucide-react';
+import EmprendimientoEditModal from './EmprendimientoEditModal';
 import { getEmprendimientos, aprobarEmprendimiento, rechazarEmprendimiento, ESTADOS } from '../../services/emprendimientoService';
 import { clearEmprendimientosCache } from '../../hooks/useEmprendimientos';
 import { CATEGORIAS } from '../../data/emprendimientos';
@@ -66,6 +67,7 @@ const EmprendimientosAdmin = () => {
   const [rejecting, setRejecting] = useState(false);
   const [motivo, setMotivo] = useState('');
   const [toast, setToast] = useState(null);
+  const [editing, setEditing] = useState(null); // emprendimiento en edición
 
   const fetchAll = async () => {
     setLoading(true);
@@ -148,6 +150,15 @@ const EmprendimientosAdmin = () => {
     } finally {
       setActing(false);
     }
+  };
+
+  const handleSaved = (updated) => {
+    // Conserva el estado de moderación que ya teníamos en pantalla
+    setItems((prev) => prev.map((i) => (i.id === updated.id ? { ...i, ...updated } : i)));
+    setSelected((prev) => (prev && prev.id === updated.id ? { ...prev, ...updated } : prev));
+    clearEmprendimientosCache();
+    setEditing(null);
+    setToast({ type: 'ok', text: `"${updated.nombre}" actualizado.` });
   };
 
   const catColor = (id) => CATEGORIAS.find((c) => c.id === id)?.color || '#004990';
@@ -304,6 +315,14 @@ const EmprendimientosAdmin = () => {
                           className="text-blue-600 hover:text-blue-800 font-semibold text-sm whitespace-nowrap"
                         >
                           Ver detalle
+                        </button>
+                        <button
+                          onClick={() => setEditing(item)}
+                          disabled={acting}
+                          title="Editar"
+                          className="inline-flex items-center gap-1 text-gray-600 hover:text-blue-700 text-xs font-semibold px-2 py-1.5 rounded-lg hover:bg-blue-50 transition disabled:opacity-50"
+                        >
+                          <Pencil className="h-3.5 w-3.5" /> Editar
                         </button>
                         {item.estado !== ESTADOS.APROBADO && (
                           <button
@@ -481,6 +500,15 @@ const EmprendimientosAdmin = () => {
               <button onClick={closeModal} disabled={acting} className="px-5 py-3 rounded-lg font-semibold text-gray-700 hover:bg-gray-200 transition disabled:opacity-50">
                 Cerrar
               </button>
+              {!rejecting && (
+                <button
+                  onClick={() => setEditing(selected)}
+                  disabled={acting}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200 transition disabled:opacity-50"
+                >
+                  <Pencil className="h-5 w-5" /> Editar
+                </button>
+              )}
               {selected.estado !== ESTADOS.RECHAZADO && !rejecting && (
                 <button
                   onClick={() => { setRejecting(true); setActionError(null); }}
@@ -511,6 +539,14 @@ const EmprendimientosAdmin = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {editing && (
+        <EmprendimientoEditModal
+          item={editing}
+          onClose={() => setEditing(null)}
+          onSaved={handleSaved}
+        />
       )}
     </main>
   );

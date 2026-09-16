@@ -17,6 +17,10 @@ import api from './api'
  *   GET    /emprendimientos                 Listado completo (panel admin). Acepta
  *                                           ?estado=pendiente|aprobado|rechazado
  *
+ *   PUT    /emprendimientos/:id             Edición desde el panel admin (multipart, mismos
+ *                                           campos del registro; logo opcional; fotos_existentes[]
+ *                                           con las URLs previas que se conservan).
+ *
  *   PATCH  /emprendimientos/:id/aprobar     Aprueba. El backend envía correo al
  *                                           representante avisando que ya está publicado.
  *   PATCH  /emprendimientos/:id/rechazar    Rechaza. Body: { motivo }. El backend envía
@@ -124,6 +128,38 @@ export const createEmprendimiento = async (data, logo = null, fotos = []) => {
     return response.data
   } catch (error) {
     console.error('Error al registrar emprendimiento:', error)
+    throw error
+  }
+}
+
+/**
+ * Editar un emprendimiento (panel admin). Mismos campos del registro.
+ * @param {string} id
+ * @param {Object} data - campos de texto (los arreglos se envían como campo[])
+ * @param {Object} files
+ * @param {File|null} [files.logo] - solo si se reemplaza
+ * @param {File[]} [files.fotos] - fotos nuevas
+ * @param {string[]} [files.fotosExistentes] - URLs de fotos previas que se conservan
+ * @returns {Promise<Object>} emprendimiento normalizado
+ */
+export const updateEmprendimiento = async (id, data, { logo = null, fotos = [], fotosExistentes = [] } = {}) => {
+  const formData = new FormData()
+  Object.entries(data).forEach(([key, value]) => {
+    if (value === undefined || value === null || value === '') return
+    if (Array.isArray(value)) value.forEach((v) => formData.append(`${key}[]`, v))
+    else formData.append(key, value)
+  })
+  fotosExistentes.forEach((url) => formData.append('fotos_existentes[]', url))
+  if (logo) formData.append('logo', logo)
+  fotos.forEach((file) => formData.append('fotos[]', file))
+
+  try {
+    const response = await api.put(`/emprendimientos/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return normalizeEmprendimiento(unwrap(response))
+  } catch (error) {
+    console.error('Error al editar emprendimiento:', error)
     throw error
   }
 }

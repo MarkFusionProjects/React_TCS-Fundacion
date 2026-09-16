@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { createDonation, generateSignature } from '../../services/donationService'
+import { createDonation, generateSignature, linkDonationCertificate } from '../../services/donationService'
 import { useLanguage } from '../../translations/LanguageContext'
 import RecurringPaymentModal from './RecurringPaymentModal'
 import CancelRecurringModal from './CancelRecurringModal'
+import CertificadoDonacionModal from './CertificadoDonacionModal'
 
 function DonationForm() {
   const { t } = useLanguage()
@@ -28,6 +29,10 @@ function DonationForm() {
   const [recurringOpen, setRecurringOpen] = useState(false)
   const [cancelOpen, setCancelOpen] = useState(false)
   const [frequency, setFrequency] = useState('once') // 'once' | 'recurring'
+
+  // Certificado de donación: checkbox → popup para subir cédula/RUT
+  const [certificateOpen, setCertificateOpen] = useState(false)
+  const [certificate, setCertificate] = useState(null) // { id, fileName } cuando ya se envió la solicitud
 
   // Configuración desde .env
   const WOMPI_PUBLIC_KEY = import.meta.env.VITE_PUBLISHABLE_KEY
@@ -190,6 +195,14 @@ function DonationForm() {
       const reference = result?.data?.reference
       if (!reference) {
         throw new Error('El servidor no devolvió una referencia válida')
+      }
+
+      // ===== VINCULAR SOLICITUD DE CERTIFICADO (si la hay) =====
+      // No bloquea el pago si falla: el correo a la Fundación ya salió al enviar la solicitud.
+      if (certificate?.id) {
+        linkDonationCertificate(certificate.id, reference).catch((e) =>
+          console.warn('No se pudo vincular el certificado con la donación:', e?.message)
+        )
       }
 
       // ===== GENERAR FIRMA DE INTEGRIDAD (requerida por Wompi en producción) =====
@@ -657,6 +670,42 @@ function DonationForm() {
             </label>
           </div>
 
+          {/* ===== CERTIFICADO DE DONACIÓN (checkbox → popup cédula/RUT) ===== */}
+          <div className="mb-6">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={Boolean(certificate) || certificateOpen}
+                onChange={(e) => {
+                  if (e.target.checked) setCertificateOpen(true)
+                  else setCertificate(null)
+                }}
+                disabled={loading}
+                className="mt-1 w-4 h-4 flex-shrink-0 disabled:cursor-not-allowed"
+                style={{ accentColor: '#004990' }}
+              />
+              <span className="text-sm text-gray-600 leading-relaxed">
+                <span className="font-medium" style={{ color: '#004990' }}>📜 {t('donation.certificateRequest.checkbox')}</span>
+                {!certificate && (
+                  <span className="block text-xs text-gray-400">{t('donation.certificateRequest.checkboxHint')}</span>
+                )}
+              </span>
+            </label>
+            {certificate && (
+              <div className="ml-7 mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                <span className="text-green-800">
+                  ✅ {t('donation.certificateRequest.attached')}: <strong className="break-all">{certificate.fileName}</strong>
+                </span>
+                <button type="button" onClick={() => setCertificateOpen(true)} className="underline" style={{ color: '#004990' }}>
+                  {t('donation.certificateRequest.change')}
+                </button>
+                <button type="button" onClick={() => setCertificate(null)} className="underline text-gray-500">
+                  {t('donation.certificateRequest.remove')}
+                </button>
+              </div>
+            )}
+          </div>
+
           {/* ===== BOTÓN DE ENVÍO (segun frecuencia) ===== */}
           <button
             type="button"
@@ -716,6 +765,21 @@ function DonationForm() {
       <CancelRecurringModal
         open={cancelOpen}
         onClose={() => setCancelOpen(false)}
+      />
+
+      <CertificadoDonacionModal
+        open={certificateOpen}
+        onClose={() => setCertificateOpen(false)}
+        onSubmitted={(data) => setCertificate(data)}
+        donor={{
+          name: formData.name,
+          last_name: formData.last_name,
+          email: formData.email,
+          phone: formData.phone,
+          identity_document: formData.identity_document,
+          donation_value: Number(formData.donation_value) || '',
+          donation_destination: formData.donation_destination?.join(', ')
+        }}
       />
     </section>
   )

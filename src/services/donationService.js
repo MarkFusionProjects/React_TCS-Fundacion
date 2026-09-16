@@ -84,3 +84,38 @@ export const getDonationById = async (id) => {
  *   message: "Mensaje opcional"
  * }
  */
+
+/**
+ * Solicitar certificado de donación adjuntando la cédula o el RUT.
+ * El backend guarda el documento y envía la alerta por correo a la Fundación.
+ * @param {Object} donor - { name, last_name, email, phone, identity_document, donation_value, donation_destination }
+ * @param {File} documento - PDF, JPG, PNG o WEBP (máx 10 MB)
+ * @returns {Promise<Object>} - data.id de la solicitud
+ */
+export const requestDonationCertificate = async (donor, documento) => {
+  const formData = new FormData()
+  Object.entries(donor).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') formData.append(key, value)
+  })
+  formData.append('documento', documento)
+
+  try {
+    const response = await api.post('/donation/certificado', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error al solicitar certificado de donación:', error)
+    throw error
+  }
+}
+
+/**
+ * Asociar una solicitud de certificado con la referencia de la donación creada.
+ * @param {string} certificateId
+ * @param {string} reference - DON-...
+ */
+export const linkDonationCertificate = async (certificateId, reference) => {
+  const response = await api.patch(`/donation/certificado/${certificateId}`, { reference })
+  return response.data
+}

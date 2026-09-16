@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   verifyPaymentSource,
   cancelPaymentSource
@@ -93,7 +94,8 @@ function CancelRecurringModal({ open, onClose }) {
 
   if (!open) return null
 
-  return (
+  // Portal a <body>: el contenedor del formulario tiene transform y recortaría un position: fixed
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -246,7 +248,7 @@ function CancelRecurringModal({ open, onClose }) {
         </div>
       </div>
     </div>
-  )
+  , document.body)
 }
 
 export default CancelRecurringModal

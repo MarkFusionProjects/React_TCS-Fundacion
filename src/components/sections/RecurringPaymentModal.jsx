@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   getAcceptanceTokens,
   tokenizeNequi,
@@ -321,7 +322,8 @@ function RecurringPaymentModal({ open, onClose, donor }) {
 
   if (!open) return null
 
-  return (
+  // Portal a <body>: el contenedor del formulario tiene transform y recortaría un position: fixed
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -808,7 +810,7 @@ function RecurringPaymentModal({ open, onClose, donor }) {
         </div>
       </div>
     </div>
-  )
+  , document.body)
 }
 
 export default RecurringPaymentModal

@@ -8,8 +8,8 @@ let cache = null
 
 /**
  * Carga los emprendimientos APROBADOS desde el backend.
- * Si el backend falla (o aún no existe el endpoint) usa la lista manual de
- * src/data/emprendimientos.js, para que el directorio nunca quede vacío.
+ * Si el backend no responde, usa la lista manual de src/data/emprendimientos.js
+ * como respaldo. Una lista vacía del backend se respeta (directorio vacío).
  */
 export function useEmprendimientos() {
   const [items, setItems] = useState(cache || [])
@@ -22,9 +22,9 @@ export function useEmprendimientos() {
     getEmprendimientosAprobados()
       .then((list) => {
         if (cancelled) return
-        cache = list.length ? list : EMPRENDIMIENTOS
+        cache = list
         setItems(cache)
-        setSource(list.length ? 'api' : 'local')
+        setSource('api')
       })
       .catch(() => {
         if (cancelled) return

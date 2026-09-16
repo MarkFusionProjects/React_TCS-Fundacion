@@ -26,6 +26,11 @@ api.interceptors.request.use(
     // if (token) {
     //   config.headers.Authorization = `Bearer ${token}`
     // }
+
+    // Clave del panel admin (aprobar/rechazar emprendimientos). Solo se envía si está configurada.
+    if (import.meta.env.VITE_ADMIN_API_KEY) {
+      config.headers['x-admin-key'] = import.meta.env.VITE_ADMIN_API_KEY
+    }
     return config
   },
   (error) => {

@@ -5,7 +5,7 @@ import { useLanguage } from '../../translations/LanguageContext'
 
 function Footer() {
   const navigate = useNavigate()
-  const { t } = useLanguage()
+  const { t, img } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
   const footerRef = useRef(null)
 
@@ -33,7 +33,7 @@ function Footer() {
           {/* Logo + propósito */}
           <div className="flex flex-col gap-0 md:w-64 shrink-0">
             <Link to="/" className="-my-6 md:-my-8">
-              <img src="/images/Testimonios/Logos we are TCS-02.png" alt="Fundación TCS" className="h-32 md:h-40 w-auto" />
+              <img src={img('layout.logoFooter')} alt="Fundación TCS" className="h-32 md:h-40 w-auto" />
             </Link>
             <p className="text-white/80 text-sm leading-relaxed">
               {t('footer.description')}
@@ -74,7 +74,7 @@ function Footer() {
               <ul className="space-y-2 text-sm text-white/80">
               <li>
                 <a
-                  href="/images/Testimonios/politicas/PL-RC-01%20POL%C3%8DTICA%20DE%20TRATAMIENTO%20DE%20DATOS%20PERSONALES%20FUNDACION%20TCS%20ABRIL%202026.pdf"
+                  href={img('layout.politicaDatos')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
@@ -84,7 +84,7 @@ function Footer() {
               </li>
               <li>
                 <a
-                  href="/images/Testimonios/politicas/Pol%C3%ADtica%20de%20privacidad%20y%20tratamiento%20de%20datos%20personales%20p%C3%A1gina%20Web%20Fundaci%C3%B3n%20The%20Columbus%20School%20(1).pdf"
+                  href={img('layout.avisoPrivacidad')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"

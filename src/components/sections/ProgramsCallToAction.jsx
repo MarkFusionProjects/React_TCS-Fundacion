@@ -5,16 +5,8 @@ import { useLanguage } from '../../translations/LanguageContext'
 
 function ProgramsCallToAction() {
   const navigate = useNavigate()
-  const { t, language } = useLanguage()
+  const { t, language, img } = useLanguage()
 
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
   const [isVisible, setIsVisible] = useState(false)
   const [activeTab, setActiveTab] = useState('tab2')
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -135,7 +127,7 @@ function ProgramsCallToAction() {
         `}>
           {activeTab === 'tab1' && (
             <img
-              src={img("/images/Testimonios/Programas1.webp")}
+              src={img('programs.programas1')}
               alt="Programas educativos - Becas y proyectos"
               onLoad={() => setImageLoaded(true)}
               className="w-full h-auto object-contain rounded-2xl shadow-xl"
@@ -144,7 +136,7 @@ function ProgramsCallToAction() {
 
           {activeTab === 'tab2' && (
             <img
-              src={language === 'en' ? '/images/Ingles/Programas2.english.svg' : '/images/Testimonios/Programas2.webp'}
+              src={img('programs.programas2')}
               alt="Infraestructura y voluntariado"
               onLoad={() => setImageLoaded(true)}
               className="w-full h-auto object-contain rounded-2xl shadow-xl"
@@ -153,7 +145,7 @@ function ProgramsCallToAction() {
 
           {activeTab === 'tab3' && (
             <img
-              src={language === 'en' ? '/images/Ingles/CbyC_inglés.svg' : '/images/Testimonios/CbyC_español.svg'}
+              src={img('programs.cbyc')}
               alt="Columbus by Columbus"
               onLoad={() => setImageLoaded(true)}
               className="w-full h-auto object-contain rounded-2xl shadow-xl"

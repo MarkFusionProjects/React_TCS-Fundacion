@@ -4,7 +4,7 @@ import { useLanguage } from '../../translations/LanguageContext'
 
 function Hero() {
   const navigate = useNavigate()
-  const { t, language } = useLanguage()
+  const { t, language, img } = useLanguage()
   const [currentBanner, setCurrentBanner] = useState(0)
   const [direction, setDirection] = useState(1)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -17,21 +17,8 @@ function Hero() {
     return () => window.removeEventListener('resize', check)
   }, [])
 
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
-
-  const banners = [
-    img('/images/Testimonios/Bannerprincipal1.webp'),
-    img('/images/Testimonios/Bannerprincipal2.webp'),
-    img('/images/Testimonios/banner-ayudanos.png'),
-    img('/images/Testimonios/baner3.png'),
-  ]
+  // Editables desde el panel admin (src/data/siteAssets.js)
+  const banners = [img('hero.banner1'), img('hero.banner2'), img('hero.banner3'), img('hero.banner4')]
 
   useEffect(() => {
     setIsLoaded(true)

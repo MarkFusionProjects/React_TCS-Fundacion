@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useLanguage } from '../translations/LanguageContext'
 
 function Vinculate() {
-  const { language, t } = useLanguage()
+  const { language, t, img } = useLanguage()
   const navigate = useNavigate()
   const refs = useRef({})
   const [activeSection, setActiveSection] = useState(null)
@@ -13,7 +13,7 @@ function Vinculate() {
     {
       id: 'voluntariado',
       title: t('vinculate.volunteering'),
-      banner: '/images/Testimonios/Voluntariado.svg',
+      banner: img('vinculate.voluntariado'),
       pending: false,
       color: '#004990',
       bg: '#f3f4f6',
@@ -27,7 +27,7 @@ function Vinculate() {
     {
       id: 'donaciones-especie',
       title: t('vinculate.inKindDonations'),
-      banner: '/images/Testimonios/Donacionesenespecie.svg',
+      banner: img('vinculate.donacionesEspecie'),
       pending: false,
       color: '#EC008C',
       bg: '#ffffff',
@@ -35,35 +35,32 @@ function Vinculate() {
     {
       id: 'servicio-social',
       title: t('vinculate.socialService'),
-      banner: language === 'en' ? '/images/Ingles/Servicio Social E inglés.svg' : '/images/Testimonios/Servicio Social E.svg',
+      banner: img('vinculate.servicioSocial'),
       pending: false,
       color: '#92c83e',
       bg: '#f3f4f6',
-      rawBanner: true,
       buttonLabel: language === 'en' ? 'Social directory' : 'Directorio social',
-      buttonUrl: 'https://canva.link/cht8yv6za6dehty',
+      buttonUrl: img('vinculate.directorioSocialUrl'),
     },
     {
       id: 'aliados-comerciales',
       title: t('vinculate.commercialAllies'),
-      banner: language === 'en' ? '/images/Ingles/Aliado comercial inglés.svg' : '/images/Testimonios/Aliado comercial.svg',
+      banner: img('vinculate.aliadosComerciales'),
       pending: false,
       color: '#F37021',
       bg: '#ffffff',
-      rawBanner: true,
       buttonLabel: language === 'en' ? 'Register here' : 'Inscríbete aquí',
-      buttonUrl: 'https://forms.gle/zkKpDJC2F9QMyMMNA',
+      buttonUrl: img('vinculate.aliadosFormUrl'),
       buttonColor: '#EC008C',
       buttonLeft: '68%',
     },
     {
       id: 'marketplace',
       title: t('vinculate.marketplace'),
-      banner: language === 'en' ? '/images/Ingles/Marketplace inglés.svg' : '/images/Testimonios/Marketplace.svg',
+      banner: img('vinculate.marketplace'),
       pending: false,
       color: '#014991',
       bg: '#f3f4f6',
-      rawBanner: true,
       buttonLabel: t('vinculate.comingSoon'),
       comingSoonButton: true,
       buttonColor: '#EC008C',
@@ -76,15 +73,6 @@ function Vinculate() {
       navigateTo: '/marketplace/registro',
     },
   ]
-
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
 
   const scrollTo = (id) => {
     setPressedBtn(id)
@@ -201,7 +189,7 @@ function Vinculate() {
                     style={{ '--tw-ring-color': `${s.color}55` }}
                   >
                     <img
-                      src={s.rawBanner ? s.banner : img(s.banner)}
+                      src={s.banner}
                       alt={s.title}
                       className="w-full h-auto"
                     />

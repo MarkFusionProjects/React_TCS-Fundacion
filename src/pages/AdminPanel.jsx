@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FileText, Search, Download, RefreshCw, Calendar, Mail, Phone, User, DollarSign, CreditCard, Hash, AlertCircle, MapPin, IdCard, Target, Repeat, CheckCircle2, XCircle, Clock, Store } from 'lucide-react';
+import { FileText, Search, Download, RefreshCw, Calendar, Mail, Phone, User, DollarSign, CreditCard, Hash, AlertCircle, MapPin, IdCard, Target, Repeat, CheckCircle2, XCircle, Clock, Store, LayoutTemplate } from 'lucide-react';
 import EmprendimientosAdmin from '../components/admin/EmprendimientosAdmin';
+import SiteContentAdmin from '../components/admin/SiteContentAdmin';
 import { getRecurringCharges } from '../services/paymentSourceService';
 import api from '../services/api';
 
@@ -338,6 +339,17 @@ const AdminPanel = () => {
             <Store className="h-4 w-4" />
             Emprendimientos
           </button>
+          <button
+            onClick={() => setActiveTab('contenido')}
+            className={`flex items-center gap-2 px-5 py-3 font-semibold text-sm border-b-2 transition ${
+              activeTab === 'contenido'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <LayoutTemplate className="h-4 w-4" />
+            Contenido del sitio
+          </button>
         </div>
       </div>
 
@@ -560,6 +572,9 @@ const AdminPanel = () => {
         </div>
       </main>
       )}
+
+      {/* === TAB: CONTENIDO DEL SITIO (CMS) === */}
+      {activeTab === 'contenido' && <SiteContentAdmin />}
 
       {/* === TAB: EMPRENDIMIENTOS (Directorio comercial) === */}
       {activeTab === 'emprendimientos' && <EmprendimientosAdmin />}

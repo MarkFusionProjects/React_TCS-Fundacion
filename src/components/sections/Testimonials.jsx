@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../../translations/LanguageContext'
 
 function Testimonials() {
-  const { t } = useLanguage()
+  const { t, img } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const [modalIndex, setModalIndex] = useState(null)
@@ -14,7 +14,7 @@ function Testimonials() {
       role: t('testimonials.brayan.role'),
       text: t('testimonials.brayan.full'),
       excerpt: t('testimonials.brayan.excerpt'),
-      image: "/images/Testimonios/Santi.JPG",
+      image: img('testimonials.foto1'),
       color: "#004990",
       imagePosition: "center 25%"
     },
@@ -23,7 +23,7 @@ function Testimonials() {
       role: t('testimonials.cristobal.role'),
       text: t('testimonials.cristobal.full'),
       excerpt: t('testimonials.cristobal.excerpt'),
-      image: "/images/Testimonios/Camila.PNG",
+      image: img('testimonials.foto2'),
       color: "#92c83e",
       imagePosition: "center 30%"
     },
@@ -32,7 +32,7 @@ function Testimonials() {
       role: t('testimonials.nicolas.role'),
       text: t('testimonials.nicolas.full'),
       excerpt: t('testimonials.nicolas.excerpt'),
-      image: "/images/Testimonios/Valentina.webp",
+      image: img('testimonials.foto3'),
       color: "#004990",
       imagePosition: "center 40%"
     }

@@ -2,53 +2,18 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLanguage } from '../translations/LanguageContext'
 import { ChevronLeft, ChevronRight, FileText, ExternalLink } from 'lucide-react'
 
-const alianzasLogos = [
-  '/images/Testimonios/60.png',
-  '/images/Testimonios/61.png',
-  '/images/Ingles/aliadoss.jpeg',
-  '/images/Testimonios/62.png',
-  '/images/Testimonios/63.png',
-  '/images/Testimonios/64.png',
-  '/images/Testimonios/65.jpeg',
-  '/images/Testimonios/66.png',
-  '/images/Testimonios/67.png',
-  '/images/Testimonios/68.png',
-  '/images/Testimonios/69.png',
-  '/images/Testimonios/70.png',
-  '/images/Testimonios/71.png',
-  '/images/Testimonios/72.jpeg',
-  '/images/Testimonios/73.jpeg',
-  '/images/Testimonios/74.jpeg',
-  '/images/Testimonios/75.jpeg',
-]
+// Logos de aliados (editables desde el panel admin, ver src/data/siteAssets.js)
+const alianzasKeys = Array.from({ length: 17 }, (_, i) => `nosotros.aliado${i + 1}`)
 
-const historicReports = [
-  { year: '2021', url: 'https://drive.google.com/file/d/1rj-ivQapmt6hmqL3myxI5ab-7Ir-n3oK/view?usp=sharing' },
-  { year: '2022', url: 'https://drive.google.com/file/d/1NRFOXum8HCQsc1-n7tIb01lw48pMyGWo/view?usp=sharing' },
-  { year: '2023', url: 'https://drive.google.com/file/d/1yGdtSLuj1RPVI3NeVVR2hFsiw-52a6CK/view?usp=sharing' },
-  { year: '2024', url: 'https://heyzine.com/flip-book/af4cc69f36.html' },
-  { year: '2025', url: 'https://heyzine.com/flip-book/4a19fb0490.html#page/1' },
-]
+const historicYears = [2021, 2022, 2023, 2024, 2025]
 
-const quienesSomosImages = [
-  '/images/Testimonios/40.jpg',
-  '/images/Testimonios/41.jpg',
-  '/images/Testimonios/42.jpg',
-  '/images/Testimonios/43.jpg',
-  '/images/Testimonios/44.jpg',
-  '/images/Testimonios/45.jpg',
-]
+const quienesSomosKeys = [1, 2, 3, 4, 5, 6].map((n) => `nosotros.quienesSomos${n}`)
 
-const slides = [
-  { year: '1992 - 1999', img: '/images/Testimonios/90.svg' },
-  { year: '2004 - 2008', img: '/images/Testimonios/91.svg' },
-  { year: '2009 - 2011', img: '/images/Testimonios/92.svg' },
-  { year: '2013 - 2015', img: '/images/Testimonios/93.svg' },
-  { year: '2020 - 2022', img: '/images/Testimonios/94.svg' },
-  { year: '2024 - 2025', img: '/images/Testimonios/95.svg' },
-]
+const slideYears = ['1992 - 1999', '2004 - 2008', '2009 - 2011', '2013 - 2015', '2020 - 2022', '2024 - 2025']
 
 function AlianzasCarrusel() {
+  const { img } = useLanguage()
+  const alianzasLogos = alianzasKeys.map(img)
   const [isMobile, setIsMobile] = useState(false)
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -124,17 +89,11 @@ function AlianzasCarrusel() {
 }
 
 function Nosotros() {
-  const { language, t } = useLanguage()
+  const { language, t, img } = useLanguage()
+  const quienesSomosImages = quienesSomosKeys.map(img)
+  const slides = slideYears.map((year, i) => ({ year, img: img(`nosotros.historia${i + 1}`) }))
   const [current, setCurrent] = useState(0)
 
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef(null)
   const [qsSlide, setQsSlide] = useState(0)
@@ -253,7 +212,7 @@ function Nosotros() {
             <div className="w-20 h-1 mx-auto rounded-full" style={{ backgroundColor: '#92c83e' }} />
           </div>
           <img
-            src={language === 'en' ? '/images/Ingles/Estrategia_inglés.svg' : '/images/Testimonios/estrategia_español.svg'}
+            src={img('nosotros.estrategia')}
             alt="Nuestra estrategia"
             className="w-full h-auto block"
           />
@@ -284,7 +243,7 @@ function Nosotros() {
           {/* Character Counts */}
           <div className="mt-10">
             <img
-              src={img("/images/Testimonios/CharacterCounts.svg")}
+              src={img('nosotros.characterCounts')}
               alt="Character Counts"
               className="w-full h-auto"
             />
@@ -293,7 +252,7 @@ function Nosotros() {
           {/* ODS */}
           <div className="mt-6">
             <img
-              src={img("/images/Testimonios/ODS.svg")}
+              src={img('nosotros.ods')}
               alt="Objetivos de Desarrollo Sostenible"
               className="w-full h-auto"
             />
@@ -486,7 +445,7 @@ function Nosotros() {
             </div>
             <div className="rounded-xl overflow-hidden">
               <img
-                src="/images/Testimonios/Informedegestión.svg"
+                src={img('nosotros.informeGestion')}
                 alt="Informe de gestión 2025"
                 className="w-full h-auto"
               />
@@ -503,7 +462,7 @@ function Nosotros() {
             </h3>
 
             <div className="flex flex-wrap gap-3">
-              {historicReports.map(({ year, url }) => (
+              {historicYears.map((year) => ({ year, url: img(`nosotros.informe${year}`) })).map(({ year, url }) => (
                 <a
                   key={year}
                   href={url}

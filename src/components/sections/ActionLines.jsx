@@ -2,16 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useLanguage } from '../../translations/LanguageContext'
 
 function ActionLines() {
-  const { t, language } = useLanguage()
+  const { t, language, img } = useLanguage()
 
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
 
   const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef(null)
@@ -74,7 +66,7 @@ function ActionLines() {
           `}
         >
           <img
-            src={language === 'en' ? '/images/Ingles/Estrategia_inglés.svg' : '/images/Testimonios/estrategia_español.svg'}
+            src={img('actionLines.estrategia')}
             alt={t('actionLines.title')}
             className="w-full h-auto block"
           />

@@ -5,16 +5,8 @@ import DonationForm from '../components/sections/DonationForm'
 import { useLanguage } from '../translations/LanguageContext'
 
 function Donar() {
-  const { t, language } = useLanguage()
+  const { t, language, img } = useLanguage()
 
-  const img = (path) => {
-    if (language === 'en') {
-      const fileName = path.split('/').pop()
-      const lastDot = fileName.lastIndexOf('.')
-      return `/images/Ingles/${fileName.slice(0, lastDot)}.english${fileName.slice(lastDot)}`
-    }
-    return path
-  }
   const [isVisible, setIsVisible] = useState(false)
   const pageRef = useRef(null)
 
@@ -32,7 +24,7 @@ function Donar() {
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
       `}>
         <img
-          src={img("/images/Testimonios/Bannerdonación.svg")}
+          src={img('donar.banner')}
           alt="Realiza tu donación"
           className="w-full shadow-md object-cover block"
         />

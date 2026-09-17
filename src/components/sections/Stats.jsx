@@ -2,19 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { Users, Globe, GraduationCap, HandHeart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useLanguage } from '../../translations/LanguageContext'
 
-const carouselImages = [
-  '/images/Testimonios/20.jpg',
-  '/images/Testimonios/21.jpg',
-  '/images/Testimonios/22.png',
-  '/images/Testimonios/23.jpg',
-  '/images/Testimonios/24.jpg',
-  '/images/Testimonios/25.jpeg',
-  '/images/Testimonios/26.jpg',
-  '/images/Testimonios/27.jpg',
-]
+// Claves de las fotos del carrusel (editables desde el panel admin, ver src/data/siteAssets.js)
+const carouselKeys = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `stats.galeria${n}`)
 
 function Stats() {
-  const { t } = useLanguage()
+  const { t, img } = useLanguage()
+  const carouselImages = carouselKeys.map(img)
   const [isVisible, setIsVisible] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
 

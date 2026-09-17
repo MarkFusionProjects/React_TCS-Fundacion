@@ -12,7 +12,7 @@ function Navbar() {
   useEffect(() => {
     setMounted(true)
   }, [])
-  const { t } = useLanguage()
+  const { t, img } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,7 +55,7 @@ function Navbar() {
               className="hover:scale-105 transition-all duration-300 ease-out group"
             >
               <img
-                src="/images/logo fundacion 2024.webp"
+                src={img('layout.logoNavbar')}
                 alt="The Columbus School"
                 className={`w-auto transition-all duration-300 group-hover:drop-shadow-lg ${scrolled ? 'h-12 md:h-16' : 'h-14 md:h-20'}`}
               />

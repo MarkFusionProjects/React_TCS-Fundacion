@@ -18,7 +18,7 @@ function Hero() {
   }, [])
 
   // Editables desde el panel admin (src/data/siteAssets.js)
-  const banners = [img('hero.banner1'), img('hero.banner2'), img('hero.banner3'), img('hero.banner4')]
+  const banners = [img('hero.bannerChoco'), img('hero.banner1'), img('hero.banner2'), img('hero.banner3'), img('hero.banner4')]
 
   useEffect(() => {
     setIsLoaded(true)
@@ -89,6 +89,42 @@ function Hero() {
 
         {/* CAPA PARA BOTONES */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-4">
+          {/* BOTÓN CAMPAÑA CHOCÓ - Banner 0 (abre el link de pago de Wompi) */}
+          <div
+            className={`
+              absolute
+              transition-all
+              duration-700
+              ease-out
+              ${currentBanner === 0
+                ? 'opacity-100 pointer-events-auto delay-700 scale-100'
+                : 'opacity-0 pointer-events-none delay-0 scale-95'
+              }
+            `}
+            style={{
+              bottom: isMobile ? '7%' : '11%',
+              left: '26%',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <a
+              href={img('hero.chocoUrl')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block font-black rounded-full transition-all duration-300 hover:scale-110 active:scale-100 pointer-events-auto shadow-2xl whitespace-nowrap"
+              style={{
+                backgroundColor: '#EC008C',
+                color: '#ffffff',
+                fontSize: isMobile ? '0.75rem' : 'clamp(1rem, 2.5vw, 1.6rem)',
+                padding: isMobile ? '0.35rem 1.1rem' : 'clamp(0.5rem, 1.3vw, 0.9rem) clamp(1.5rem, 4vw, 3rem)',
+                fontFamily: "'Poppins', sans-serif",
+                boxShadow: '0 8px 30px rgba(236,0,140,0.5)',
+              }}
+            >
+              {t('hero.buttonChoco')}
+            </a>
+          </div>
+
           {/* BOTÓN ¡SÚMATE! - Banner 1 */}
           <div
             className={`
@@ -96,7 +132,7 @@ function Hero() {
               transition-all 
               duration-700
               ease-out
-              ${currentBanner === 0 
+              ${currentBanner === 1 
                 ? 'opacity-100 translate-y-0 pointer-events-auto delay-700 scale-100' 
                 : 'opacity-0 translate-y-10 pointer-events-none delay-0 scale-95'
               }
@@ -104,7 +140,7 @@ function Hero() {
             style={{
               bottom: '10%',
               left: '50%',
-              transform: currentBanner === 0 
+              transform: currentBanner === 1 
                 ? 'translateX(-50%) translateY(0)' 
                 : 'translateX(-50%) translateY(40px)',
               width: 'calc(100% - 2rem)',
@@ -156,7 +192,7 @@ function Hero() {
               transition-all
               duration-700
               ease-out
-              ${currentBanner === 1
+              ${currentBanner === 2
                 ? 'opacity-100 translate-y-0 pointer-events-auto delay-700 scale-100'
                 : 'opacity-0 translate-y-10 pointer-events-none delay-0 scale-95'
               }
@@ -164,7 +200,7 @@ function Hero() {
             style={{
               bottom: '27%',
               left: '50%',
-              transform: currentBanner === 1
+              transform: currentBanner === 2
                 ? 'translateX(-50%) translateY(0)'
                 : 'translateX(-50%) translateY(40px)',
               width: 'calc(100% - 2rem)',
@@ -216,7 +252,7 @@ function Hero() {
               transition-all
               duration-700
               ease-out
-              ${currentBanner === 2
+              ${currentBanner === 3
                 ? 'opacity-100 pointer-events-auto delay-700 scale-100'
                 : 'opacity-0 pointer-events-none delay-0 scale-95'
               }
@@ -250,7 +286,7 @@ function Hero() {
               transition-all
               duration-700
               ease-out
-              ${currentBanner === 3
+              ${currentBanner === 4
                 ? 'opacity-100 pointer-events-auto delay-700 scale-100'
                 : 'opacity-0 pointer-events-none delay-0 scale-95'
               }

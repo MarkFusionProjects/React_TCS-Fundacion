@@ -20,7 +20,8 @@ export const translations = {
       button1: "Be part of it!",
       button2: "Donate Now",
       button3: "Go to donate",
-      button4: "Change a story"
+      button4: "Change a story",
+      buttonChoco: "Donate now"
     },
 
     // === ABOUT (Quiénes Somos) ===
@@ -569,7 +570,8 @@ export const translations = {
       button1: "¡Súmate!",
       button2: "Dona ahora",
       button3: "Ir a donar",
-      button4: "Cambia una historia"
+      button4: "Cambia una historia",
+      buttonChoco: "Dona ahora"
     },
 
     // === ABOUT (Quiénes Somos) ===

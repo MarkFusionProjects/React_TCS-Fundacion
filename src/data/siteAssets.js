@@ -28,6 +28,8 @@ export const SITE_ASSETS = [
   link('layout.avisoPrivacidad', 'Documento: Aviso de privacidad (PDF)', `${T}/politicas/Pol%C3%ADtica%20de%20privacidad%20y%20tratamiento%20de%20datos%20personales%20p%C3%A1gina%20Web%20Fundaci%C3%B3n%20The%20Columbus%20School%20(1).pdf`),
 
   // ── Inicio ──
+  img('hero.bannerChoco', 'Portada · Banner campaña Chocó', `${T}/BannerChoco.webp`, en(`${T}/BannerChoco.webp`)),
+  link('hero.chocoUrl', 'Portada · Enlace del botón de la campaña Chocó (Wompi)', 'https://checkout.wompi.co/l/B9Kwq0'),
   img('hero.banner1', 'Portada · Banner 1', `${T}/Bannerprincipal1.webp`, en(`${T}/Bannerprincipal1.webp`)),
   img('hero.banner2', 'Portada · Banner 2', `${T}/Bannerprincipal2.webp`, en(`${T}/Bannerprincipal2.webp`)),
   img('hero.banner3', 'Portada · Banner 3', `${T}/banner-ayudanos.png`, en(`${T}/banner-ayudanos.png`)),

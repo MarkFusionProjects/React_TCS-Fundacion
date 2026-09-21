@@ -131,6 +131,9 @@ export const translations = {
 
       destination: "Destination of Your Donation *",
       destinationSubtitle: "Select a program you wish to support:",
+      chocoTitle: "Support the rebuilding of a school in Chocó",
+      chocoSubtitle: "Special campaign · Secure payment through Wompi",
+      chocoButton: "Donate to Chocó",
 
       amount: "Amount to Donate *",
       suggestedAmounts: "Suggested Amounts",
@@ -681,6 +684,9 @@ export const translations = {
 
       destination: "Destino de tu donación *",
       destinationSubtitle: "Selecciona un programa que deseas apoyar:",
+      chocoTitle: "Apoya la reconstrucción de un colegio en Chocó",
+      chocoSubtitle: "Campaña especial · Pago seguro a través de Wompi",
+      chocoButton: "Donar a Chocó",
 
       amount: "Monto a donar *",
       suggestedAmounts: "Montos sugeridos",

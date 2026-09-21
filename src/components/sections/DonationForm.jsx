@@ -6,7 +6,7 @@ import CancelRecurringModal from './CancelRecurringModal'
 import CertificadoDonacionModal from './CertificadoDonacionModal'
 
 function DonationForm() {
-  const { t } = useLanguage()
+  const { t, img } = useLanguage()
 
   // ===============================
   // ESTADOS DEL FORMULARIO
@@ -439,6 +439,34 @@ function DonationForm() {
                 )
               })}
             </div>
+
+            {/* ===== CAMPAÑA CHOCÓ (link de pago Wompi, editable desde el panel) ===== */}
+            <a
+              href={img('hero.chocoUrl')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg group"
+              style={{
+                borderColor: '#00aeef',
+                background: 'linear-gradient(135deg, rgba(0,174,239,0.14) 0%, rgba(0,73,144,0.10) 100%)',
+              }}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="text-2xl">🏫</span>
+                <div className="min-w-0">
+                  <p className="font-bold text-sm md:text-base leading-tight" style={{ color: '#004990' }}>
+                    {t('donation.chocoTitle')}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-0.5">{t('donation.chocoSubtitle')}</p>
+                </div>
+              </div>
+              <span
+                className="inline-flex items-center gap-1 text-white font-bold text-sm px-5 py-2.5 rounded-full shadow-md transition-transform group-hover:scale-105 whitespace-nowrap"
+                style={{ backgroundColor: '#EC008C' }}
+              >
+                {t('donation.chocoButton')} →
+              </span>
+            </a>
           </div>
 
           {/* ===== MONTO DE DONACIÓN - SECCIÓN DESTACADA ===== */}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon, MapPin, Truck, BadgePercent, Pencil } from 'lucide-react';
+import { Store, Search, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle, Mail, Phone, Instagram, Globe, User, Calendar, Image as ImageIcon, MapPin, Truck, BadgePercent, Pencil, IdCard, ShieldQuestion } from 'lucide-react';
 import EmprendimientoEditModal from './EmprendimientoEditModal';
 import { getEmprendimientos, aprobarEmprendimiento, rechazarEmprendimiento, ESTADOS } from '../../services/emprendimientoService';
 import { clearEmprendimientosCache } from '../../hooks/useEmprendimientos';
@@ -356,6 +356,40 @@ const EmprendimientosAdmin = () => {
             </div>
 
             <div className="p-6 space-y-6">
+              {/* Verificación de pertenencia a la comunidad TCS */}
+              <div className="rounded-lg border-2 p-4" style={{ borderColor: '#004990', backgroundColor: '#00499008' }}>
+                <p className="text-xs uppercase font-bold flex items-center gap-2 mb-2" style={{ color: '#004990' }}>
+                  <ShieldQuestion className="h-4 w-4" /> Verificación con la base del colegio
+                </p>
+                <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                  <div className="flex items-start gap-2">
+                    <IdCard className="h-4 w-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500">Cédula</p>
+                      <p className="font-medium text-gray-900">{selected.cedula || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <User className="h-4 w-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500">Código de familia</p>
+                      <p className="font-medium text-gray-900">{selected.codigoFamilia || '—'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-gray-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500">Estado</p>
+                      <p className="font-medium text-gray-900 capitalize">{selected.verificacionComunidad || 'pendiente'}</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Verifica estos datos con la base de datos del colegio antes de aprobar. Papá/mamá y estudiantes se
+                  confirman con el código de familia; egresados y staff con la cédula.
+                </p>
+              </div>
+
               {/* Fotos */}
               {selected.imagenes?.length > 0 ? (
                 <div className="grid grid-cols-3 gap-3">
@@ -422,6 +456,7 @@ const EmprendimientosAdmin = () => {
                     <div>
                       <p className="text-xs text-gray-500 uppercase font-semibold">Punto físico</p>
                       <p className="text-gray-900 font-medium">{selected.puntoFisico}</p>
+                      {selected.horario && <p className="text-xs text-gray-500">{selected.horario}</p>}
                     </div>
                   </div>
                 )}
@@ -439,6 +474,11 @@ const EmprendimientosAdmin = () => {
                   <div>
                     <p className="text-xs text-gray-500 uppercase font-semibold">Beneficio comunidad TCS</p>
                     <p className="text-gray-900 font-medium">{selected.beneficioTcs ? (selected.beneficioDescripcion || 'Sí') : 'No'}</p>
+                    {selected.beneficioComo && <p className="text-xs text-gray-600 mt-1"><span className="font-semibold">Cómo se hace efectivo:</span> {selected.beneficioComo}</p>}
+                    {selected.beneficioCondiciones?.length > 0 && (
+                      <p className="text-xs text-gray-600 mt-1"><span className="font-semibold">Condiciones:</span> {selected.beneficioCondiciones.join(', ')}</p>
+                    )}
+                    {selected.beneficioCondicionesDetalle && <p className="text-xs text-gray-600">{selected.beneficioCondicionesDetalle}</p>}
                   </div>
                 </div>
                 {selected.web && (

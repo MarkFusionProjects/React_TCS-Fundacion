@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertCircle, ImagePlus, Save, Trash2, X } from 'lucide-react';
 import { updateEmprendimiento } from '../../services/emprendimientoService';
-import { CATEGORIAS, RELACIONES_TCS } from '../../data/emprendimientos';
+import { CATEGORIAS, RELACIONES_TCS, REDES_SOCIALES, CONDICIONES_BENEFICIO } from '../../data/emprendimientos';
 
 const CATEGORIA_LABEL = {
   moda: 'Moda y accesorios',
@@ -33,6 +33,8 @@ const phoneOk = (v) => { const d = String(v).replace(/\D/g, ''); return d.length
 const fromItem = (item) => ({
   nombre_emprendimiento: item.nombre || '',
   nombre_representante: item.dueno || '',
+  cedula: item.cedula || '',
+  codigo_familia: item.codigoFamilia || '',
   telefono_personal: item.telefonoPersonal || '',
   telefono_marca: item.whatsapp || '',
   email: item.email || '',
@@ -42,11 +44,16 @@ const fromItem = (item) => ({
   historia: item.historia || '',
   descripcion: item.descripcion || '',
   red_social: item.redSocial || '',
+  red_social_tipo: item.redSocialTipo || 'instagram',
   web: item.web || '',
   punto_fisico: item.puntoFisico || '',
+  horario: item.horario || '',
   envios: item.envios || '',
   beneficio_tcs: item.beneficioTcs ? 'si' : 'no',
   beneficio_descripcion: item.beneficioDescripcion || '',
+  beneficio_como: item.beneficioComo || '',
+  beneficio_condiciones: item.beneficioCondiciones || [],
+  beneficio_condiciones_detalle: item.beneficioCondicionesDetalle || '',
 });
 
 const Field = ({ label, error, children, optional }) => (
@@ -124,7 +131,12 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
     if (form.telefono_marca && !phoneOk(form.telefono_marca)) e.telefono_marca = 'Número inválido (7 a 15 dígitos)';
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Correo inválido';
     if (form.web && !/^https?:\/\/\S+\.\S+/.test(form.web.trim())) e.web = 'Debe iniciar con http:// o https://';
-    if (form.beneficio_tcs === 'si' && !form.beneficio_descripcion.trim()) e.beneficio_descripcion = 'Describe el beneficio';
+    if (!String(form.cedula).trim()) e.cedula = 'Obligatorio';
+    if (form.beneficio_tcs === 'si') {
+      if (!form.beneficio_descripcion.trim()) e.beneficio_descripcion = 'Describe el beneficio';
+      if (!form.beneficio_como.trim()) e.beneficio_como = 'Indica cómo se hace efectivo';
+      if (form.beneficio_condiciones.length === 0) e.beneficio_condiciones = 'Selecciona al menos una';
+    }
     return e;
   };
 
@@ -142,7 +154,11 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
         red_social: form.red_social.replace(/^@/, '').trim(),
         web: form.web.trim(),
         categoria_otro: form.categorias.includes('otro') ? form.categoria_otro.trim() : '',
+        cedula: String(form.cedula).replace(/\D/g, ''),
         beneficio_descripcion: form.beneficio_tcs === 'si' ? form.beneficio_descripcion.trim() : '',
+        beneficio_como: form.beneficio_tcs === 'si' ? form.beneficio_como.trim() : '',
+        beneficio_condiciones: form.beneficio_tcs === 'si' ? form.beneficio_condiciones : [],
+        beneficio_condiciones_detalle: form.beneficio_tcs === 'si' ? form.beneficio_condiciones_detalle.trim() : '',
       }, { logo: logoFile, fotos: fotosNuevas, fotosExistentes });
       onSaved(updated);
     } catch (err) {
@@ -173,6 +189,12 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
             </Field>
             <Field label="Representante de marca" error={errors.nombre_representante}>
               <input name="nombre_representante" value={form.nombre_representante} onChange={handleChange} className={inputCls} maxLength={100} />
+            </Field>
+            <Field label="Cédula" error={errors.cedula}>
+              <input name="cedula" value={form.cedula} onChange={handleChange} className={inputCls} maxLength={20} />
+            </Field>
+            <Field label="Código de familia" optional>
+              <input name="codigo_familia" value={form.codigo_familia} onChange={handleChange} className={inputCls} maxLength={30} />
             </Field>
             <Field label="Teléfono personal" error={errors.telefono_personal}>
               <input name="telefono_personal" value={form.telefono_personal} onChange={handleChange} className={inputCls} />
@@ -226,7 +248,12 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
           </Field>
 
           <div className="grid md:grid-cols-2 gap-4">
-            <Field label="Red social principal (sin @)" error={errors.red_social}>
+            <Field label="Red social">
+              <select name="red_social_tipo" value={form.red_social_tipo} onChange={handleChange} className={inputCls}>
+                {REDES_SOCIALES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+              </select>
+            </Field>
+            <Field label="Usuario de la red (sin @)" error={errors.red_social}>
               <input name="red_social" value={form.red_social} onChange={handleChange} className={inputCls} maxLength={60} />
             </Field>
             <Field label="Web / portafolio" error={errors.web}>
@@ -234,6 +261,9 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
             </Field>
             <Field label="Punto físico" optional>
               <input name="punto_fisico" value={form.punto_fisico} onChange={handleChange} className={inputCls} maxLength={150} />
+            </Field>
+            <Field label="Horario de atención" optional>
+              <input name="horario" value={form.horario} onChange={handleChange} className={inputCls} maxLength={150} />
             </Field>
             <Field label="Envíos" optional>
               <input name="envios" value={form.envios} onChange={handleChange} className={inputCls} maxLength={150} />
@@ -245,9 +275,30 @@ const EmprendimientoEditModal = ({ item, onClose, onSaved }) => {
               </select>
             </Field>
             {form.beneficio_tcs === 'si' && (
-              <Field label="Descripción del beneficio" error={errors.beneficio_descripcion}>
-                <input name="beneficio_descripcion" value={form.beneficio_descripcion} onChange={handleChange} className={inputCls} maxLength={200} />
-              </Field>
+              <>
+                <Field label="Descripción del beneficio" error={errors.beneficio_descripcion}>
+                  <input name="beneficio_descripcion" value={form.beneficio_descripcion} onChange={handleChange} className={inputCls} maxLength={300} />
+                </Field>
+                <Field label="Cómo se hace efectivo" error={errors.beneficio_como}>
+                  <input name="beneficio_como" value={form.beneficio_como} onChange={handleChange} className={inputCls} maxLength={300} />
+                </Field>
+                <Field label="Condiciones de la oferta" error={errors.beneficio_condiciones}>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {CONDICIONES_BENEFICIO.map((c) => {
+                      const on = form.beneficio_condiciones.includes(c);
+                      return (
+                        <button key={c} type="button" onClick={() => toggle('beneficio_condiciones', c)}
+                          className={`px-3 py-1.5 rounded-full border text-xs font-semibold transition ${on ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}>
+                          {c}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Field>
+                <Field label="Detalle de condiciones" optional>
+                  <input name="beneficio_condiciones_detalle" value={form.beneficio_condiciones_detalle} onChange={handleChange} className={inputCls} maxLength={300} />
+                </Field>
+              </>
             )}
           </div>
 

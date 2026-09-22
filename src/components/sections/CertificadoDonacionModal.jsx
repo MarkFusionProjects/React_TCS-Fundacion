@@ -172,7 +172,7 @@ function CertificadoDonacionModal({ open, onClose, donor, onSubmitted }) {
                   </>
                 ) : (
                   <>
-                    <div className="text-3xl mb-1">🪪</div>
+                    <div className="text-3xl mb-1">📄</div>
                     <p className="font-semibold text-sm" style={{ color: '#004990' }}>{tr('dropLabel')}</p>
                     <p className="text-xs text-gray-500 mt-1">{tr('dropHint')}</p>
                   </>

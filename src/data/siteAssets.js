@@ -75,6 +75,9 @@ export const SITE_ASSETS = [
   link('vinculate.directorioSocialUrl', 'Vincúlate · Enlace "Directorio social"', 'https://canva.link/cht8yv6za6dehty'),
   link('vinculate.aliadosFormUrl', 'Vincúlate · Enlace formulario Aliados comerciales', 'https://forms.gle/zkKpDJC2F9QMyMMNA'),
 
+  // ── Directorio comercial ──
+  img('marketplace.banner', 'Directorio comercial · Banner', `${T}/BannerDirectorio.webp`),
+
   // ── Donar ──
   img('donar.banner', 'Donar · Banner', `${T}/Bannerdonación.svg`, en(`${T}/Bannerdonación.svg`)),
 ]

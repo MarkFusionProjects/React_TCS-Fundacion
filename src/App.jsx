@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useEffect } from 'react'
 import { LanguageProvider } from './translations/LanguageContext'
 import Navbar from './components/layout/Navbar'
+import QuickMenu from './components/layout/QuickMenu'
 import Footer from './components/layout/Footer'
 import Inicio from './pages/Inicio'
 import Donar from './pages/Donar'
@@ -52,6 +53,7 @@ function App() {
             element={
               <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col overflow-x-hidden">
                 <Navbar />
+                <QuickMenu />
                 
                 <main className="flex-grow">
                   <Routes>

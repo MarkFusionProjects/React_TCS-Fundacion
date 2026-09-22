@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, ImagePlus, CheckCircle2, AlertCircle, Trash2, Store, ShieldCheck, User, Briefcase, FileText, Image as ImageIcon, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ImagePlus, CheckCircle2, AlertCircle, Trash2, Store, ShieldCheck, User, Briefcase, FileText, Image as ImageIcon, BadgePercent, ExternalLink, Eye } from 'lucide-react'
 import { useLanguage } from '../translations/LanguageContext'
-import { CATEGORIAS, RELACIONES_TCS } from '../data/emprendimientos'
+import { CATEGORIAS, RELACIONES_TCS, REDES_SOCIALES, CONDICIONES_BENEFICIO } from '../data/emprendimientos'
 import { createEmprendimiento } from '../services/emprendimientoService'
 
 const PRIVACY_URL = 'https://fundacionthecolumbusschool.com/privacy-policy-2/'
@@ -10,11 +10,18 @@ const PRIVACY_URL = 'https://fundacionthecolumbusschool.com/privacy-policy-2/'
 const MAX_PHOTOS = 3
 const MAX_PHOTO_MB = 5
 const MAX_LOGO_MB = 10
+const MAX_HISTORIA = 500
+const MAX_DESCRIPCION = 500
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml']
+
+// Relaciones con el colegio que se verifican con el código de familia
+const RELACIONES_CON_CODIGO = ['padre', 'estudiante']
 
 const INITIAL = {
   acepta_datos: false,
   nombre_representante: '',
+  cedula: '',
+  codigo_familia: '',
   telefono_personal: '',
   relacion_tcs: [],
   nombre_emprendimiento: '',
@@ -24,12 +31,17 @@ const INITIAL = {
   categoria_otro: '',
   historia: '',
   descripcion: '',
+  red_social_tipo: 'instagram',
   red_social: '',
   web: '',
   punto_fisico: '',
+  horario: '',
   envios: '',
   beneficio_tcs: '',
   beneficio_descripcion: '',
+  beneficio_como: '',
+  beneficio_condiciones: [],
+  beneficio_condiciones_detalle: '',
 }
 
 const inputCls =
@@ -61,7 +73,7 @@ const Label = ({ children, optional, optionalText }) => (
 
 /**
  * Página /marketplace/registro — formulario público de registro para el
- * directorio comercial. Replica las preguntas del formulario original.
+ * Directorio Comercial TCS.
  */
 function RegistroEmprendimiento() {
   const { t } = useLanguage()
@@ -72,9 +84,9 @@ function RegistroEmprendimiento() {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(null) // null | 'success' | 'error'
+  const [preview, setPreview] = useState(false)
   const logoRef = useRef(null)
   const fotosRef = useRef(null)
-  const topRef = useRef(null)
 
   const f = (key) => t(`marketplace.form.${key}`)
 
@@ -87,6 +99,9 @@ function RegistroEmprendimiento() {
   const previews = useMemo(() => fotos.map((x) => URL.createObjectURL(x)), [fotos])
   useEffect(() => () => { if (logoPreview) URL.revokeObjectURL(logoPreview) }, [logoPreview])
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews])
+
+  // El código de familia solo aplica a papá/mamá y estudiantes
+  const pideCodigoFamilia = form.relacion_tcs.some((r) => RELACIONES_CON_CODIGO.includes(r))
 
   const clearError = (name) => errors[name] && setErrors((prev) => ({ ...prev, [name]: undefined }))
 
@@ -132,9 +147,10 @@ function RegistroEmprendimiento() {
   const validate = () => {
     const e = {}
     if (!form.acepta_datos) e.acepta_datos = f('acceptRequired')
-    const req = ['nombre_representante', 'telefono_personal', 'nombre_emprendimiento', 'telefono_marca', 'email', 'historia', 'descripcion', 'red_social', 'web']
+    const req = ['nombre_representante', 'cedula', 'telefono_personal', 'nombre_emprendimiento', 'telefono_marca', 'email', 'historia', 'descripcion', 'red_social', 'web']
     req.forEach((k) => { if (!form[k].trim()) e[k] = f('required') })
     if (form.relacion_tcs.length === 0) e.relacion_tcs = f('selectOne')
+    if (pideCodigoFamilia && !form.codigo_familia.trim()) e.codigo_familia = f('required')
     if (form.categorias.length === 0) e.categorias = f('selectOne')
     if (form.categorias.includes('otro') && !form.categoria_otro.trim()) e.categoria_otro = f('required')
     if (form.telefono_personal && !phoneOk(form.telefono_personal)) e.telefono_personal = f('invalidPhone')
@@ -143,19 +159,35 @@ function RegistroEmprendimiento() {
     if (form.web && !/^https?:\/\/\S+\.\S+/.test(form.web.trim())) e.web = f('invalidUrl')
     if (!logo) e.logo = f('required')
     if (!form.beneficio_tcs) e.beneficio_tcs = f('selectOne')
-    if (form.beneficio_tcs === 'si' && !form.beneficio_descripcion.trim()) e.beneficio_descripcion = f('required')
+    if (form.beneficio_tcs === 'si') {
+      if (!form.beneficio_descripcion.trim()) e.beneficio_descripcion = f('required')
+      if (!form.beneficio_como.trim()) e.beneficio_como = f('required')
+      if (form.beneficio_condiciones.length === 0) e.beneficio_condiciones = f('selectOne')
+    }
     return e
   }
 
+  const scrollToFirstError = () => {
+    setTimeout(() => {
+      document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 50)
+  }
+
+  const handlePreview = () => {
+    const errs = validate()
+    setErrors(errs)
+    if (Object.keys(errs).length) return scrollToFirstError()
+    setPreview(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleSubmit = async (ev) => {
-    ev.preventDefault()
+    ev?.preventDefault?.()
     const errs = validate()
     setErrors(errs)
     if (Object.keys(errs).length) {
-      // Llevar al primer campo con error
-      const first = document.querySelector('[data-error="true"]')
-      first?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      return
+      setPreview(false)
+      return scrollToFirstError()
     }
     setLoading(true)
     setStatus(null)
@@ -164,12 +196,17 @@ function RegistroEmprendimiento() {
         {
           ...form,
           acepta_datos: 'true',
+          cedula: form.cedula.replace(/\D/g, ''),
+          codigo_familia: pideCodigoFamilia ? form.codigo_familia.trim() : '',
           telefono_personal: form.telefono_personal.replace(/\D/g, ''),
           telefono_marca: form.telefono_marca.replace(/\D/g, ''),
           red_social: form.red_social.replace(/^@/, '').trim(),
           web: form.web.trim(),
           categoria_otro: form.categorias.includes('otro') ? form.categoria_otro.trim() : '',
           beneficio_descripcion: form.beneficio_tcs === 'si' ? form.beneficio_descripcion.trim() : '',
+          beneficio_como: form.beneficio_tcs === 'si' ? form.beneficio_como.trim() : '',
+          beneficio_condiciones: form.beneficio_tcs === 'si' ? form.beneficio_condiciones : [],
+          beneficio_condiciones_detalle: form.beneficio_tcs === 'si' ? form.beneficio_condiciones_detalle.trim() : '',
         },
         logo,
         fotos
@@ -178,6 +215,7 @@ function RegistroEmprendimiento() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch {
       setStatus('error')
+      setPreview(false)
     } finally {
       setLoading(false)
     }
@@ -190,6 +228,14 @@ function RegistroEmprendimiento() {
       </p>
     ) : null
   const border = (name) => (errors[name] ? 'border-red-400' : 'border-gray-200')
+
+  const contador = (value, max) => (
+    <span className={`text-xs mt-1 block text-right ${value.length >= max ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+      {max - value.length} {f('charsLeft')}
+    </span>
+  )
+
+  const redSocialInfo = REDES_SOCIALES.find((r) => r.id === form.red_social_tipo) || REDES_SOCIALES[0]
 
   // ─── Éxito ───
   if (status === 'success') {
@@ -214,8 +260,88 @@ function RegistroEmprendimiento() {
     )
   }
 
+  // ─── Previsualización ───
+  if (preview) {
+    const catsLabel = form.categorias
+      .map((c) => (c === 'otro' && form.categoria_otro ? form.categoria_otro : t(`marketplace.categories.${c}`)))
+      .join(' · ')
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 md:py-16 px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#004990' }}>{f('previewTitle')}</h1>
+            <p className="text-gray-600 text-sm">{f('previewHint')}</p>
+          </div>
+
+          {/* Tarjeta como se verá en el directorio */}
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+            <div className="grid sm:grid-cols-[220px_1fr]">
+              <div className="aspect-square bg-white border-r border-gray-100 flex items-center justify-center p-4">
+                {logoPreview ? <img src={logoPreview} alt="" className="max-w-full max-h-full object-contain" /> : <Store className="w-14 h-14 text-gray-300" />}
+              </div>
+              <div className="p-5">
+                <p className="text-xs font-semibold mb-1" style={{ color: '#EC008C' }}>{catsLabel}</p>
+                <h2 className="text-xl font-bold mb-2" style={{ color: '#004990' }}>{form.nombre_emprendimiento}</h2>
+                <p className="text-sm text-gray-600 mb-3 whitespace-pre-line">{form.descripcion}</p>
+                {form.beneficio_tcs === 'si' && (
+                  <div className="rounded-lg p-3 text-sm" style={{ backgroundColor: '#92c83e18', color: '#4d7c0f' }}>
+                    <p className="font-bold text-xs uppercase tracking-wide mb-0.5">{t('marketplace.benefit')}</p>
+                    {form.beneficio_descripcion}
+                  </div>
+                )}
+              </div>
+            </div>
+            {previews.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 p-4 border-t border-gray-100">
+                {previews.map((src) => (
+                  <div key={src} className="aspect-square rounded-lg overflow-hidden bg-gray-50">
+                    <img src={src} alt="" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2 p-5 border-t border-gray-100 text-sm">
+              <p className="text-gray-600"><span className="font-semibold" style={{ color: '#004990' }}>{redSocialInfo.label}:</span> @{form.red_social}</p>
+              <p className="text-gray-600 break-all"><span className="font-semibold" style={{ color: '#004990' }}>{f('website')}:</span> {form.web}</p>
+              <p className="text-gray-600"><span className="font-semibold" style={{ color: '#004990' }}>{t('marketplace.contact')}:</span> +{form.telefono_marca.replace(/\D/g, '')} · {form.email}</p>
+              {form.punto_fisico && <p className="text-gray-600"><span className="font-semibold" style={{ color: '#004990' }}>{t('marketplace.location')}:</span> {form.punto_fisico}{form.horario ? ` · ${form.horario}` : ''}</p>}
+              {form.envios && <p className="text-gray-600"><span className="font-semibold" style={{ color: '#004990' }}>{t('marketplace.shipping')}:</span> {form.envios}</p>}
+            </div>
+          </div>
+
+          {status === 'error' && (
+            <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-4 mb-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span>{f('errorText')}</span>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3 justify-center">
+            <button
+              onClick={() => setPreview(false)}
+              disabled={loading}
+              className="inline-flex items-center gap-2 font-bold py-3 px-6 rounded-full border-2 bg-white transition-all hover:bg-gray-50 disabled:opacity-50"
+              style={{ borderColor: '#004990', color: '#004990' }}
+            >
+              <ArrowLeft className="w-4 h-4" /> {f('previewBack')}
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="inline-flex items-center gap-2 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-2xl hover:-translate-y-0.5 transition-all disabled:bg-gray-400 disabled:translate-y-0"
+              style={{ backgroundColor: loading ? undefined : '#92c83e' }}
+            >
+              {loading ? f('submitting') : f('previewConfirm')}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div ref={topRef} className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 md:py-16 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 md:py-16 px-4">
       <div className="max-w-3xl mx-auto">
         <Link to="/marketplace" className="inline-flex items-center gap-2 font-semibold mb-6 hover:gap-3 transition-all duration-300" style={{ color: '#004990' }}>
           <ArrowLeft className="w-5 h-5" />
@@ -232,7 +358,7 @@ function RegistroEmprendimiento() {
           <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">{f('pageSubtitle')}</p>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-6">
+        <form onSubmit={(e) => { e.preventDefault(); handlePreview() }} noValidate className="space-y-6">
           {/* ─── 1. AUTORIZACIÓN ─── */}
           <Section icon={ShieldCheck} title={f('sectionAuth')}>
             <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 md:p-5 max-h-64 overflow-y-auto text-sm text-gray-700 leading-relaxed whitespace-pre-line">
@@ -253,12 +379,19 @@ function RegistroEmprendimiento() {
 
           {/* ─── 2. REPRESENTANTE ─── */}
           <Section icon={User} title={f('sectionRep')}>
+            <div>
+              <Label>{f('repName')}</Label>
+              <input name="nombre_representante" value={form.nombre_representante} onChange={handleChange}
+                placeholder={f('repNamePlaceholder')} className={`${inputCls} ${border('nombre_representante')}`} maxLength={100} />
+              {fieldError('nombre_representante')}
+            </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label>{f('repName')}</Label>
-                <input name="nombre_representante" value={form.nombre_representante} onChange={handleChange}
-                  placeholder={f('repNamePlaceholder')} className={`${inputCls} ${border('nombre_representante')}`} maxLength={100} />
-                {fieldError('nombre_representante')}
+                <Label>{f('cedula')}</Label>
+                <input name="cedula" value={form.cedula} onChange={handleChange} inputMode="numeric"
+                  placeholder={f('cedulaPlaceholder')} className={`${inputCls} ${border('cedula')}`} maxLength={20} />
+                <p className="text-xs text-gray-500 mt-1">{f('cedulaHint')}</p>
+                {fieldError('cedula')}
               </div>
               <div>
                 <Label>{f('personalPhone')}</Label>
@@ -284,9 +417,19 @@ function RegistroEmprendimiento() {
               </div>
               {fieldError('relacion_tcs')}
             </div>
+            {/* Código de familia solo para papá/mamá y estudiantes */}
+            {pideCodigoFamilia && (
+              <div className="animate-fadeIn">
+                <Label>{f('familyCode')}</Label>
+                <input name="codigo_familia" value={form.codigo_familia} onChange={handleChange}
+                  placeholder={f('familyCodePlaceholder')} className={`${inputCls} ${border('codigo_familia')}`} maxLength={30} />
+                <p className="text-xs text-gray-500 mt-1">{f('familyCodeHint')}</p>
+                {fieldError('codigo_familia')}
+              </div>
+            )}
           </Section>
 
-          {/* ─── 3. EMPRENDIMIENTO ─── */}
+          {/* ─── 3. MARCA O EMPRENDIMIENTO ─── */}
           <Section icon={Briefcase} title={f('sectionBrand')}>
             <div>
               <Label>{f('businessName')}</Label>
@@ -343,17 +486,26 @@ function RegistroEmprendimiento() {
           <Section icon={FileText} title={f('sectionDetails')}>
             <div>
               <Label>{f('history')}</Label>
-              <textarea name="historia" value={form.historia} onChange={handleChange} rows="3" maxLength={1000}
+              <textarea name="historia" value={form.historia} onChange={handleChange} rows="3" maxLength={MAX_HISTORIA}
                 placeholder={f('historyPlaceholder')} className={`${inputCls} resize-none ${border('historia')}`} />
+              {contador(form.historia, MAX_HISTORIA)}
               {fieldError('historia')}
             </div>
             <div>
               <Label>{f('description')}</Label>
-              <textarea name="descripcion" value={form.descripcion} onChange={handleChange} rows="4" maxLength={1500}
+              <textarea name="descripcion" value={form.descripcion} onChange={handleChange} rows="4" maxLength={MAX_DESCRIPCION}
                 placeholder={f('descriptionPlaceholder')} className={`${inputCls} resize-none ${border('descripcion')}`} />
+              {contador(form.descripcion, MAX_DESCRIPCION)}
               {fieldError('descripcion')}
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            {/* Red social: primero la red, luego el usuario */}
+            <div className="grid md:grid-cols-[180px_1fr] gap-4">
+              <div>
+                <Label>{f('socialNetwork')}</Label>
+                <select name="red_social_tipo" value={form.red_social_tipo} onChange={handleChange} className={`${inputCls} border-gray-200`}>
+                  {REDES_SOCIALES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+                </select>
+              </div>
               <div>
                 <Label>{f('socialUser')}</Label>
                 <div className="relative">
@@ -361,14 +513,17 @@ function RegistroEmprendimiento() {
                   <input name="red_social" value={form.red_social} onChange={handleChange}
                     placeholder={f('socialUserPlaceholder')} className={`${inputCls} pl-9 ${border('red_social')}`} maxLength={60} />
                 </div>
+                <p className="text-xs text-gray-500 mt-1 break-all">
+                  {f('socialUserHint')} {form.red_social && <span className="font-medium" style={{ color: '#004990' }}>{redSocialInfo.baseUrl}{form.red_social.replace(/^@/, '')}</span>}
+                </p>
                 {fieldError('red_social')}
               </div>
-              <div>
-                <Label>{f('website')}</Label>
-                <input type="url" name="web" value={form.web} onChange={handleChange}
-                  placeholder={f('websitePlaceholder')} className={`${inputCls} ${border('web')}`} />
-                {fieldError('web')}
-              </div>
+            </div>
+            <div>
+              <Label>{f('website')}</Label>
+              <input type="url" name="web" value={form.web} onChange={handleChange}
+                placeholder={f('websitePlaceholder')} className={`${inputCls} ${border('web')}`} />
+              {fieldError('web')}
             </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
@@ -376,6 +531,14 @@ function RegistroEmprendimiento() {
                 <input name="punto_fisico" value={form.punto_fisico} onChange={handleChange}
                   placeholder={f('locationPlaceholder')} className={`${inputCls} border-gray-200`} maxLength={150} />
               </div>
+              {/* El horario solo tiene sentido si hay punto físico */}
+              {form.punto_fisico.trim() && (
+                <div className="animate-fadeIn">
+                  <Label optional optionalText={f('optional')}>{f('schedule')}</Label>
+                  <input name="horario" value={form.horario} onChange={handleChange}
+                    placeholder={f('schedulePlaceholder')} className={`${inputCls} border-gray-200`} maxLength={150} />
+                </div>
+              )}
               <div>
                 <Label optional optionalText={f('optional')}>{f('shipping')}</Label>
                 <input name="envios" value={form.envios} onChange={handleChange}
@@ -384,8 +547,8 @@ function RegistroEmprendimiento() {
             </div>
           </Section>
 
-          {/* ─── 5. LOGO Y BENEFICIOS ─── */}
-          <Section icon={ImageIcon} title={f('sectionMedia')}>
+          {/* ─── 5. LOGO ─── */}
+          <Section icon={ImageIcon} title={f('sectionLogo')}>
             <div>
               <Label>{f('logo')}</Label>
               <p className="text-xs text-gray-500 mb-2">{f('logoHint')}</p>
@@ -410,9 +573,12 @@ function RegistroEmprendimiento() {
               </div>
               {fieldError('logo')}
             </div>
+          </Section>
 
+          {/* ─── 6. IMÁGENES DE PRODUCTOS ─── */}
+          <Section icon={ImageIcon} title={f('sectionPhotos')}>
             <div>
-              <Label optional optionalText={f('optional')}>{f('photos').replace(/\s*\(.*\)$/, '')}</Label>
+              <Label optional optionalText={f('optional')}>{f('photos')}</Label>
               <p className="text-xs text-gray-500 mb-2">{f('photosHint')}</p>
               <input ref={fotosRef} type="file" accept={ALLOWED_TYPES.join(',')} multiple onChange={handleFotos} className="hidden" />
               <div className="flex flex-wrap gap-3">
@@ -435,7 +601,10 @@ function RegistroEmprendimiento() {
               </div>
               {fieldError('fotos')}
             </div>
+          </Section>
 
+          {/* ─── 7. BENEFICIOS PARA LA COMUNIDAD TCS ─── */}
+          <Section icon={BadgePercent} title={f('sectionBenefits')}>
             <div>
               <Label>{f('benefit')}</Label>
               <div className="flex gap-3">
@@ -444,7 +613,7 @@ function RegistroEmprendimiento() {
                   return (
                     <label key={v}
                       className={`flex items-center gap-2 px-5 py-2.5 rounded-full border-2 cursor-pointer text-sm font-semibold transition-all ${on ? 'text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
-                      style={{ borderColor: on ? '#004990' : '#e5e7eb', backgroundColor: on ? '#004990' : undefined }}>
+                      style={{ borderColor: on ? '#92c83e' : '#e5e7eb', backgroundColor: on ? '#92c83e' : undefined }}>
                       <input type="radio" name="beneficio_tcs" value={v} checked={on} onChange={handleChange} className="hidden" />
                       {f(v === 'si' ? 'yes' : 'no')}
                     </label>
@@ -453,12 +622,43 @@ function RegistroEmprendimiento() {
               </div>
               {fieldError('beneficio_tcs')}
             </div>
+
             {form.beneficio_tcs === 'si' && (
-              <div>
-                <Label>{f('benefitDescription')}</Label>
-                <input name="beneficio_descripcion" value={form.beneficio_descripcion} onChange={handleChange}
-                  placeholder={f('benefitDescriptionPlaceholder')} className={`${inputCls} ${border('beneficio_descripcion')}`} maxLength={200} />
-                {fieldError('beneficio_descripcion')}
+              <div className="space-y-5 animate-fadeIn">
+                <div>
+                  <Label>{f('benefitDescription')}</Label>
+                  <textarea name="beneficio_descripcion" value={form.beneficio_descripcion} onChange={handleChange} rows="2" maxLength={300}
+                    placeholder={f('benefitDescriptionPlaceholder')} className={`${inputCls} resize-none ${border('beneficio_descripcion')}`} />
+                  {fieldError('beneficio_descripcion')}
+                </div>
+                <div>
+                  <Label>{f('benefitHow')}</Label>
+                  <textarea name="beneficio_como" value={form.beneficio_como} onChange={handleChange} rows="2" maxLength={300}
+                    placeholder={f('benefitHowPlaceholder')} className={`${inputCls} resize-none ${border('beneficio_como')}`} />
+                  {fieldError('beneficio_como')}
+                </div>
+                <div>
+                  <Label>{f('benefitConditions')}</Label>
+                  <p className="text-xs text-gray-500 mb-2">{f('benefitConditionsHint')}</p>
+                  <div className="space-y-2">
+                    {CONDICIONES_BENEFICIO.map((c) => {
+                      const on = form.beneficio_condiciones.includes(c)
+                      return (
+                        <label key={c} className={`flex items-start gap-3 px-3 py-2.5 rounded-lg border-2 cursor-pointer transition-all ${on ? 'bg-green-50' : 'hover:bg-gray-50'}`}
+                          style={{ borderColor: on ? '#92c83e' : '#e5e7eb' }}>
+                          <input type="checkbox" checked={on} onChange={() => toggleInArray('beneficio_condiciones', c)} className="w-4 h-4 mt-0.5" style={{ accentColor: '#92c83e' }} />
+                          <span className="text-sm text-gray-700">{f(`benefitConditionsList.${c}`)}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                  {fieldError('beneficio_condiciones')}
+                </div>
+                <div>
+                  <Label optional optionalText={f('optional')}>{f('benefitConditionsDetail')}</Label>
+                  <textarea name="beneficio_condiciones_detalle" value={form.beneficio_condiciones_detalle} onChange={handleChange} rows="2" maxLength={300}
+                    placeholder={f('benefitConditionsDetailPlaceholder')} className={`${inputCls} resize-none border-gray-200`} />
+                </div>
               </div>
             )}
           </Section>
@@ -473,23 +673,19 @@ function RegistroEmprendimiento() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-2xl hover:-translate-y-0.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:translate-y-0 text-lg"
+            className="w-full inline-flex items-center justify-center gap-2 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-2xl hover:-translate-y-0.5 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:translate-y-0 text-lg"
             style={{ backgroundColor: loading ? undefined : '#92c83e' }}
           >
-            {loading ? (
-              <span className="flex items-center justify-center gap-3">
-                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
-                {f('submitting')}
-              </span>
-            ) : (
-              f('submit')
-            )}
+            <Eye className="w-5 h-5" />
+            {f('preview')}
           </button>
         </form>
       </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: translateY(0) } }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out }
+      `}</style>
     </div>
   )
 }

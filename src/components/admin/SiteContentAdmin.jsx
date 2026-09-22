@@ -17,7 +17,7 @@ const SECTIONS = [
   { id: 'impact', label: 'Inicio · Impacto', textPrefixes: ['impact'], assetPrefixes: [] },
   { id: 'nosotros', label: 'Nosotros', textPrefixes: ['nosotros'], assetPrefixes: ['nosotros.'] },
   { id: 'vinculate', label: 'Vincúlate', textPrefixes: ['vinculate'], assetPrefixes: ['vinculate.'] },
-  { id: 'marketplace', label: 'Directorio comercial', textPrefixes: ['marketplace'], assetPrefixes: [] },
+  { id: 'marketplace', label: 'Directorio comercial', textPrefixes: ['marketplace'], assetPrefixes: ['marketplace.'] },
   { id: 'donation', label: 'Donar · Formulario', textPrefixes: ['donation', 'donationPrivacy'], assetPrefixes: ['donar.'] },
   { id: 'recurring', label: 'Donar · Pago recurrente', textPrefixes: ['recurring', 'cancelRecurring'], assetPrefixes: [] },
   { id: 'contact', label: 'Contacto', textPrefixes: ['contact'], assetPrefixes: [] },

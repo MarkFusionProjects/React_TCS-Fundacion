@@ -626,24 +626,6 @@ function DonationForm() {
             />
           </div>
 
-          {/* ===== INFORMACIÓN CERTIFICADO ===== */}
-          <div className="mb-6 p-4 bg-blue-50 border rounded-lg" style={{ borderColor: '#004990' }}>
-            <h4 className="font-semibold mb-2 flex items-center" style={{ color: '#004990' }}>
-              <span className="mr-2">📜</span>
-              {t('donation.certificate')}
-            </h4>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {t('donation.certificateText').replace('{email}', '')}
-              <a
-                href="mailto:fundaciontcs@columbus.edu.co"
-                className="underline font-medium hover:opacity-80"
-                style={{ color: '#004990' }}
-              >
-                fundaciontcs@columbus.edu.co
-              </a>
-            </p>
-          </div>
-
           {/* ===== AUTORIZACIÓN TRATAMIENTO DE DATOS ===== */}
           <div className="mb-5">
             <label className="flex items-start gap-3 cursor-pointer group">

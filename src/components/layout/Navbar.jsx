@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, X, Store } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import LanguageToggle from '../ui/LanguageToggle'
 import { useLanguage } from '../../translations/LanguageContext'
 
@@ -105,17 +105,6 @@ function Navbar() {
                 />
               </Link>
 
-              {/* Directorio comercial (Marketplace) — icono */}
-              <Link
-                to="/marketplace"
-                title={t('nav.marketplace')}
-                aria-label={t('nav.marketplace')}
-                className="w-11 h-11 rounded-full flex items-center justify-center text-white shadow-md hover:shadow-xl hover:scale-110 hover:-translate-y-0.5 transition-all duration-300"
-                style={{ backgroundColor: '#004990' }}
-              >
-                <Store className="w-5 h-5" />
-              </Link>
-
               <Link
                 to="/donar"
                 className="text-white font-bold py-3 px-10 rounded-lg transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-1 text-lg relative overflow-hidden group"
@@ -207,15 +196,6 @@ function Navbar() {
                 style={{ color: '#004990', animationDelay: '250ms' }}
               >
                 {t('nav.vinculate')}
-              </Link>
-              <Link
-                to="/marketplace"
-                onClick={closeMenu}
-                className="flex items-center justify-center gap-2 font-bold hover:bg-gray-100 py-3 px-4 rounded-lg transition-all duration-300 text-center transform hover:scale-105 hover:shadow-md animate-slideInFromTop"
-                style={{ color: '#004990', animationDelay: '275ms' }}
-              >
-                <Store className="w-5 h-5" />
-                {t('nav.marketplace')}
               </Link>
               <Link
                 to="/donar"

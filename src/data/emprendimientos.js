@@ -31,6 +31,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import {
+  Heart,
+  Lightbulb,
+  BookOpen,
+  Activity,
+  Globe2,
   Shirt,
   Sparkles,
   Home,
@@ -67,8 +72,36 @@ export const CATEGORIAS = [
   { id: 'otro',           icon: MoreHorizontal,  color: '#64748b' },
 ]
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MACRO CATEGORÍAS
+// Agrupan las categorías detalladas para que la sección "Explora por categoría"
+// no quede saturada. El filtro de arriba y los labels de las marcas siguen
+// mostrando la categoría detallada.
+// ─────────────────────────────────────────────────────────────────────────────
+export const MACRO_CATEGORIAS = [
+  { id: 'vida',         icon: Heart,     color: '#EC008C', categorias: ['moda', 'belleza', 'hogar', 'gastronomia', 'infantil'] },
+  { id: 'creacion',     icon: Lightbulb, color: '#F37021', categorias: ['arte', 'eventos'] },
+  { id: 'conocimiento', icon: BookOpen,  color: '#004990', categorias: ['educacion', 'tecnologia', 'servicios'] },
+  { id: 'bienestar',    icon: Activity,  color: '#00aeef', categorias: ['salud', 'deportes'] },
+  { id: 'entorno',      icon: Globe2,    color: '#92c83e', categorias: ['sostenibilidad', 'mascotas'] },
+]
+
 // Relación con el colegio (opciones del formulario)
 export const RELACIONES_TCS = ['padre', 'egresado', 'estudiante', 'staff']
+
+// Redes sociales que puede tener una marca (para el campo "usuario de red social")
+export const REDES_SOCIALES = [
+  { id: 'instagram', label: 'Instagram', baseUrl: 'https://instagram.com/' },
+  { id: 'facebook',  label: 'Facebook',  baseUrl: 'https://facebook.com/' },
+  { id: 'tiktok',    label: 'TikTok',    baseUrl: 'https://tiktok.com/@' },
+  { id: 'whatsapp',  label: 'WhatsApp',  baseUrl: 'https://wa.me/' },
+  { id: 'linkedin',  label: 'LinkedIn',  baseUrl: 'https://linkedin.com/in/' },
+  { id: 'youtube',   label: 'YouTube',   baseUrl: 'https://youtube.com/@' },
+  { id: 'x',         label: 'X (Twitter)', baseUrl: 'https://x.com/' },
+]
+
+// Condiciones frecuentes de los beneficios para la comunidad TCS
+export const CONDICIONES_BENEFICIO = ['montoMinimo', 'noAcumulable', 'canal', 'clientesNuevos', 'referencias', 'na']
 
 // ⚠️ Las imágenes de los ejemplos son de muestra (Unsplash). Reemplázalas por
 // las fotos reales de cada emprendimiento en /public/images/marketplace/.

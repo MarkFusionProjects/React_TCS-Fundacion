@@ -95,6 +95,14 @@ function WhatYouCanSupport() {
         { icon: GraduationCap, title: t('programs.scholarships'), description: t('programs.scholarshipsDesc') },
         { icon: Cpu, title: t('programs.robotics'), description: t('programs.roboticsDesc') },
         { icon: Building2, title: t('programs.infrastructure'), description: t('programs.infrastructureDesc') },
+        // Campaña especial: enlace directo al link de pago de Wompi
+        {
+          icon: School,
+          title: t('donation.chocoTitle'),
+          description: t('donation.chocoSubtitle'),
+          url: img('hero.chocoUrl'),
+          cta: t('donation.chocoButton'),
+        },
       ]
     },
     {
@@ -207,6 +215,17 @@ function WhatYouCanSupport() {
                       <div>
                         <p className="font-bold text-sm mb-1" style={{ color: '#004990' }}>{sub.title}</p>
                         <p className="text-gray-600 text-sm leading-relaxed">{sub.description}</p>
+                        {sub.url && (
+                          <a
+                            href={sub.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-2 text-white font-bold text-xs px-4 py-2 rounded-full shadow-md transition-all hover:scale-105 hover:shadow-lg"
+                            style={{ backgroundColor: macro.color }}
+                          >
+                            {sub.cta} →
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -219,31 +238,6 @@ function WhatYouCanSupport() {
               )}
             </div>
           ))}
-
-          {/* ===== CAMPAÑA CHOCÓ (link de pago Wompi, editable desde el panel) ===== */}
-          <div
-            className={`rounded-2xl overflow-hidden shadow-md border-2 transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
-            style={{ borderColor: '#EC008C', transitionDelay: `${macroCategories.length * 120}ms` }}
-          >
-            <div className="flex items-center gap-4 px-6 py-4" style={{ backgroundColor: '#EC008C' }}>
-              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
-                <School className="w-6 h-6 text-white" strokeWidth={2.5} />
-              </div>
-              <h3 className="text-lg font-black text-white tracking-wide">{t('donation.chocoTitle')}</h3>
-            </div>
-            <div className="bg-white px-6 py-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-gray-600 text-sm leading-relaxed">{t('donation.chocoSubtitle')}</p>
-              <a
-                href={img('hero.chocoUrl')}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-white font-bold text-sm px-5 py-2.5 rounded-full shadow-md transition-all hover:scale-105 hover:shadow-lg whitespace-nowrap"
-                style={{ backgroundColor: '#EC008C' }}
-              >
-                {t('donation.chocoButton')} →
-              </a>
-            </div>
-          </div>
         </div>
       </div>
 

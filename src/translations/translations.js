@@ -370,6 +370,7 @@ export const translations = {
       commercialAllies: "Commercial allies",
       marketplace: "Marketplace",
       commercialDirectory: "Business directory",
+      directoryRegister: "Register in the directory",
       comingSoon: "Coming soon"
     },
 
@@ -979,6 +980,7 @@ export const translations = {
       commercialAllies: "Aliados comerciales",
       marketplace: "Marketplace",
       commercialDirectory: "Directorio comercial",
+      directoryRegister: "Registro directorio comercial",
       comingSoon: "Próximamente"
     },
 

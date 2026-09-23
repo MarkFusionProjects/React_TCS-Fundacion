@@ -67,14 +67,12 @@ function Hero() {
               `}
             >
               <div className="relative overflow-hidden">
+                {/* Sin zoom: el contenedor recorta (overflow-hidden) y los
+                    banners tienen texto y botones cerca del borde */}
                 <img
                   src={banner}
                   alt={`Banner ${index + 1}`}
-                  className={`
-                    w-full h-auto object-contain
-                    transition-transform duration-[8000ms] ease-out
-                    ${index === currentBanner ? 'scale-105' : 'scale-100'}
-                  `}
+                  className="w-full h-auto object-contain"
                 />
                 {/* Overlay sutil con gradiente */}
                 <div className={`
